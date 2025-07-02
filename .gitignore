@@ -43,6 +43,4 @@ coverage/
 
 # PostgreSQL data (if any is here locally)
 .pgdata/
-
-# Others (optional)
 *.sqlite
