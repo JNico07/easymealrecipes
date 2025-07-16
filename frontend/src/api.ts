@@ -14,9 +14,9 @@ export const searchRecipes = async (searchTerm: string, page: number) => {
   return response.json();
 };
 
-// get Summary API call
-export const getRecipeSummary = async (recipeId: string) => {
-  const url = new URL(`http://localhost:5000/api/recipes/${recipeId}/summary`);
+// get Information API call
+export const getRecipeInformation = async (recipeId: string) => {
+  const url = new URL(`http://localhost:5000/api/recipes/${recipeId}/information`);
   const response = await fetch(url);
 
   if (!response.ok) {
@@ -58,7 +58,7 @@ export const addFavouriteRecipe = async (recipe: Recipe) => {
   }
 };
 
-// remove
+// remove Favourite API call
 export const removeFavouriteRecipe = async (recipe: Recipe) => {
   const url = new URL("http://localhost:5000/api/recipes/favourite");
   const body = {
