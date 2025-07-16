@@ -1,5 +1,6 @@
 const apiKey = process.env.API_KEY;
 
+// SEARCH
 export const searchRecipes = async (searchTerm: string, page:number) => {
     if(!apiKey) {
         throw new Error("API key is not set");
@@ -24,14 +25,13 @@ export const searchRecipes = async (searchTerm: string, page:number) => {
     }
 };
 
-export const getRecipeSummary = async (recipeId: string) => {
+// INFORMATION
+export const getRecipeInformation = async (recipeId: string) => {
     if (!apiKey) {
         throw new Error("API key is not set");
     }
 
-    const url = new URL(
-        `https://api.spoonacular.com/recipes/${recipeId}/summary`
-    );
+    const url = new URL(`https://api.spoonacular.com/recipes/${recipeId}/information`);
     const params = {
         apiKey: apiKey
     };
@@ -43,6 +43,7 @@ export const getRecipeSummary = async (recipeId: string) => {
     return json;
 };
 
+// FAVOURITE
 export const getFavouriteRecipesByIds = async (ids: string[]) => {
     if (!apiKey) {
         throw new Error("API key is not set");
@@ -59,4 +60,4 @@ export const getFavouriteRecipesByIds = async (ids: string[]) => {
     const json = await searchResponse.json();
 
     return { results: json };
-}
+};

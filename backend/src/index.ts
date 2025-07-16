@@ -22,10 +22,10 @@ app.get("/api/recipes/search", async (req, res) => {
     res.json(results);
 });
 
-// summary endpoint
-app.get("/api/recipes/:recipeId/summary", async (req, res) => {
+// information endpoint
+app.get("/api/recipes/:recipeId/information", async (req, res) => {
     const recipeId = req.params.recipeId;
-    const results = await RecipeAPI.getRecipeSummary(recipeId);
+    const results = await RecipeAPI.getRecipeInformation(recipeId);
 
     res.json(results);
 });
