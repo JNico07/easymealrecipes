@@ -6,7 +6,7 @@ import RecipeCard from "./components/RecipeCard";
 import RecipeModal from "./components/RecipeModal";
 import { AiOutlineSearch } from "react-icons/ai";
 
-type Tabs = "search" | "favourites";
+type Tabs = "explore" | "favourites";
 
 const App = () => {
   const [searchTerm, setSearchTerm] = useState<string>("");
@@ -15,10 +15,11 @@ const App = () => {
     undefined
   );
 
-  const [selectedTab, setSelectedTab] = useState<Tabs>();
+  const [selectedTab, setSelectedTab] = useState<Tabs>("explore");
   const [favouriteRecipes, setFavouriteRecipes] = useState<Recipe[]>([]);
   const pageNumber = useRef(1);
 
+  // Fetch favourite recipes on initial load on "FAVOURITES" tab
   useEffect(() => {
     const fetchFavouriteRecipes = async () => {
       try {
@@ -30,6 +31,23 @@ const App = () => {
     };
     fetchFavouriteRecipes();
   }, []);
+
+  // Fetch random recipes when the app loads on "SEARCH" tab
+  useEffect(() => {
+    const fetchRandomRecipes = async () => {
+      try {
+        if (selectedTab === "explore" && searchTerm.trim() === "" && recipes.length === 0) {
+          const response = await api.searchRecipes("", 1);
+          setRecipes(response.results);
+          pageNumber.current = 1;
+        }
+      } catch (error) {
+        console.log(error);
+      }
+    };
+
+    fetchRandomRecipes();
+  }, [selectedTab]);
 
   const handleSearchSubmit = async (event: FormEvent) => {
     event.preventDefault();
@@ -83,10 +101,10 @@ const App = () => {
 
       <div className="tabs">
         <h1
-          className={selectedTab === "search" ? "tab-active" : ""}
-          onClick={() => setSelectedTab("search")}
+          className={selectedTab === "explore" ? "tab-active" : ""}
+          onClick={() => setSelectedTab("explore")}
         >
-          Recipe Search
+          Explore
         </h1>
         <h1
           className={selectedTab === "favourites" ? "tab-active" : ""}
@@ -97,20 +115,26 @@ const App = () => {
       </div>
 
       {/* Search Tab */}
-      {selectedTab === "search" && (
+      {selectedTab === "explore" && (
         <>
-          <form onSubmit={(event) => handleSearchSubmit(event)}>
-            <input
-              type="text"
-              required
-              placeholder="Enter a search term ..."
-              value={searchTerm}
-              onChange={(event) => setSearchTerm(event.target.value)}
-            ></input>
-            <button type="submit">
-              <AiOutlineSearch size={40} />
+          <div className="search-bar">
+            <form onSubmit={(event) => handleSearchSubmit(event)}>
+              <input
+                type="text"
+                required
+                placeholder="Enter a search term ..."
+                value={searchTerm}
+                onChange={(event) => setSearchTerm(event.target.value)}
+              />
+              <button type="submit">
+                <AiOutlineSearch size={40} />
+              </button>
+            </form>
+
+            <button className="advanced-search-button">
+              <p>Advanced Search</p>
             </button>
-          </form>
+          </div>
 
           <div className="recipe-grid">
             {recipes.map((recipe) => {
