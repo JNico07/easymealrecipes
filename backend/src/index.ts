@@ -16,8 +16,7 @@ app.use(cors());
 app.get("/api/recipes/search", async (req, res) => {
     // GET http://localhost/api/recipes/search?searchTerm=burger&page=1
     const searchTerm = req.query.searchTerm as string;
-    const page = parseInt(req.query.page as string);
-    const results = await RecipeAPI.searchRecipes(searchTerm, page);
+    const results = await RecipeAPI.searchRecipes(searchTerm);
 
     res.json(results);
 });

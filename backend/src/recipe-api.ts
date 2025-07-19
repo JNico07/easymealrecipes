@@ -1,63 +1,62 @@
+import { title } from "process";
+
 const apiKey = process.env.API_KEY;
 
-// SEARCH
-export const searchRecipes = async (searchTerm: string, page:number) => {
-    if(!apiKey) {
-        throw new Error("API key is not set");
-    }
+// TheMealDB: search by name
+export const searchRecipes = async (searchTerm: string) => {
+  const url = new URL("https://www.themealdb.com/api/json/v1/1/search.php");
+  url.searchParams.set("s", searchTerm);
 
-    const url = new URL("https://api.spoonacular.com/recipes/complexSearch");
+  try {
+    const res = await fetch(url.toString());
+    const data = await res.json();
+    const meals = data.meals || [];
 
-    const queryParams = {
-        apiKey,
-        query: searchTerm,
-        number: "10",
-        offset: (page * 10).toString()
-    }
-    url.search = new URLSearchParams(queryParams).toString();
+    // Map the results to match the Recipe interface
+    const results = meals.map((meals: any) => ({
+      id: meals.idMeal,
+      title: meals.strMeal,
+      image: meals.strMealThumb,
+      imageType: "jpg",
+    }));
 
-    try {
-        const searchResponse = await fetch(url);
-        const resultJson = await searchResponse.json();
-        return resultJson;
-    } catch (error) {
-        console.log(error);
-    }
+    return { results };
+  } catch (err) {
+    console.error(err);
+    return { results: [] };
+  }
 };
 
-// INFORMATION
+// TheMealDB: lookup by ID
 export const getRecipeInformation = async (recipeId: string) => {
-    if (!apiKey) {
-        throw new Error("API key is not set");
-    }
+  const url = new URL("https://www.themealdb.com/api/json/v1/1/lookup.php");
+  url.searchParams.set("i", recipeId);
 
-    const url = new URL(`https://api.spoonacular.com/recipes/${recipeId}/information`);
-    const params = {
-        apiKey: apiKey
+  try {
+    const response = await fetch(url.toString());
+    const data = await response.json();
+    const meal = data.meals ? data.meals[0] : null;
+
+    if (!meal) return null;
+
+    // 🔁 Transform to match frontend's RecipeInformation
+    return {
+      id: parseInt(meal.idMeal),
+      title: meal.strMeal,
+      summary: meal.strInstructions,
+      sourceName: meal.strSource || "TheMealDB",
+      sourceUrl:
+        meal.strSource || "https://www.themealdb.com/meal/" + meal.idMeal,
     };
-    url.search = new URLSearchParams(params).toString();
-
-    const response = await fetch(url);
-    const json = await response.json();
-
-    return json;
+  } catch (err) {
+    console.error(err);
+    return null;
+  }
 };
 
-// FAVOURITE
+// Manual batching of favorites (TheMealDB has no bulk lookup)
 export const getFavouriteRecipesByIds = async (ids: string[]) => {
-    if (!apiKey) {
-        throw new Error("API key is not set");
-    }
-    
-    const url = new URL ('https://api.spoonacular.com/recipes/informationBulk');
-    const params = {
-        apiKey: apiKey,
-        ids: ids.join(",")
-    }
-    url.search = new URLSearchParams(params).toString();
-
-    const searchResponse = await fetch(url);
-    const json = await searchResponse.json();
-
-    return { results: json };
+  const requests = ids.map((id) => getRecipeInformation(id));
+  const results = await Promise.all(requests);
+  return { results: results.filter(Boolean) };
 };
