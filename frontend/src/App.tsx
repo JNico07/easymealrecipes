@@ -5,6 +5,8 @@ import type { Recipe } from "./types";
 import RecipeCard from "./components/RecipeCard";
 import RecipeModal from "./components/RecipeModal";
 import { AiOutlineSearch } from "react-icons/ai";
+import AdvancedSearchModal from "./components/AdvancedSearchModal";
+
 
 type Tabs = "explore" | "favourites";
 
@@ -144,6 +146,7 @@ const App = () => {
 
               return (
                 <RecipeCard
+                  key={recipe.id}
                   recipe={recipe}
                   onClick={() => setSelectedRecipe(recipe)}
                   onFavouriteButtonClick={
@@ -166,6 +169,7 @@ const App = () => {
         <div className="recipe-grid">
           {favouriteRecipes.map((recipe) => (
             <RecipeCard
+              key={recipe.id}
               recipe={recipe}
               onClick={() => setSelectedRecipe(recipe)}
               onFavouriteButtonClick={removeFavouriteRecipe}

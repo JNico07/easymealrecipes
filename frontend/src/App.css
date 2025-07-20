@@ -1,3 +1,8 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+
 #root {
   font-family: Arial, Helvetica, sans-serif;
 }
@@ -50,32 +55,6 @@ button {
   gap: 2em;
 }
 
-.recipe-card {
-  display: flex;
-  flex-direction: column;
-  justify-content: space-evenly;
-  background-color: white;
-  padding: 1em;
-  box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.1);
-  position: relative;
-  cursor: pointer;
-  gap: 1.5em;
-  transition: transform 0.5s ease, box-shadow 0.5s ease;
-} 
-.recipe-card:hover,
-.recipe-card:focus {
-  box-shadow: 0px 6px 16px rgba(0, 0, 0, 0.2);
-  transform: scale(1.03);
-}
-
-.recipe-card h3 {
-  font-size: 1.5em;
-  margin: 0;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-}
-
 .view-more-button {
   font-size: 1.5em;
   padding: 1em;
@@ -114,58 +93,6 @@ button {
   opacity: 80%;
   padding: 0.5em 1.5em 0.5em 1.5em;
 }
-
-/* Info Modal - START*/
-.overlay {
-  position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background-color: rgba(0, 0, 0, 0.5);
-}
-.modal {
-  position: fixed;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  background: white;
-  width: 90%;
-  max-width: 600px;
-  border-radius: 12px;
-  box-shadow: 0px 8px 24px rgba(0, 0, 0, 0.2);
-  z-index: 1000;
-}
-.modal-content {
-  padding: 1.5rem;
-}
-.modal-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-}
-.recipe-information {
-  margin-top: 1rem;
-  line-height: 1.6;
-}
-.close-btn {
-  cursor: pointer;
-  background: none;
-  border: none;
-  font-size: 1.5em;
-  font-weight: bold;
-  color: #333;
-  padding: 0.25em 0.5em;
-  border-radius: 0.25em;
-  transition: background-color 0.2s ease, color 0.2s ease;
-}
-.close-btn:hover,
-.close-btn:focus {
-  background-color: #eee;
-  color: #d00;
-  outline: none;
-}
-/* Info Modal - END*/
 
 /* Search - START */
 .search-bar {
@@ -224,10 +151,4 @@ button {
   display: flex;
   gap: 2em;
   cursor: pointer;
-}
-
-.recipe-card-title {
-  display: flex;
-  align-items: center;
-  gap: 0.5em;
 }

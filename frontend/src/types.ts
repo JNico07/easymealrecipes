@@ -10,5 +10,6 @@ export interface RecipeInformation {
   title: string;
   summary: string;
   sourceName: string;
+  youtubeTutorial: string;
   sourceUrl: string;
 }

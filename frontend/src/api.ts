@@ -62,7 +62,7 @@ export const addFavouriteRecipe = async (recipe: Recipe) => {
 export const removeFavouriteRecipe = async (recipe: Recipe) => {
   const url = new URL("http://localhost:5000/api/recipes/favourite");
   const body = {
-    recipeId: recipe.id
+    recipeId: recipe.id.toString()
   };
 
   const response = await fetch(url, {
