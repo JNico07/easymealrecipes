@@ -65,17 +65,29 @@ app.delete("/api/recipes/favourite", async (req, res) => {
     const recipeId = req.body.recipeId;
 
     try {
+        // Check if recipe exists first
+        const recipe = await prismaClient.favouriteRecipes.findUnique({
+            where: {
+                recipeId: recipeId
+            }
+        });
+
+        if (!recipe) {
+            res.status(404).json({ error: "Recipe not found in favorites" });
+        }
+
         await prismaClient.favouriteRecipes.delete({
             where: {
                 recipeId: recipeId
             }
-        })
+        });
+        
         res.status(204).send();
     } catch (error) {
         console.log(error);
         res.status(500).json({error: "Oops, something went wrong"});
     }
-})
+});
 
 app.listen(5000, () => {
     console.log("Server is running on localhost:5000");
