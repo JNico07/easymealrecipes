@@ -5,7 +5,6 @@ import type { Recipe } from "./types";
 import RecipeCard from "./components/RecipeCard";
 import RecipeModal from "./components/RecipeModal";
 import { AiOutlineSearch } from "react-icons/ai";
-import AdvancedSearchModal from "./components/AdvancedSearchModal";
 
 
 type Tabs = "explore" | "favourites";
@@ -86,7 +85,7 @@ const App = () => {
     try {
       await api.removeFavouriteRecipe(recipe);
       const updatedRecipes = favouriteRecipes.filter(
-        (favRecipes) => recipe.id !== favRecipes.id
+        (favRecipes) => recipe.id.toString() !== favRecipes.id.toString()
       );
       setFavouriteRecipes(updatedRecipes);
     } catch (error) {
@@ -141,12 +140,12 @@ const App = () => {
           <div className="recipe-grid">
             {recipes.map((recipe) => {
               const isFavorite = favouriteRecipes.some(
-                (favRecipe) => recipe.id === favRecipe.id
+                (favRecipe) => favRecipe.id.toString() === recipe.id.toString()
               );
 
               return (
                 <RecipeCard
-                  key={recipe.id}
+                  key={recipe.id.toString()}
                   recipe={recipe}
                   onClick={() => setSelectedRecipe(recipe)}
                   onFavouriteButtonClick={
@@ -169,7 +168,7 @@ const App = () => {
         <div className="recipe-grid">
           {favouriteRecipes.map((recipe) => (
             <RecipeCard
-              key={recipe.id}
+              key={recipe.id.toString()}
               recipe={recipe}
               onClick={() => setSelectedRecipe(recipe)}
               onFavouriteButtonClick={removeFavouriteRecipe}
