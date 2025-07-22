@@ -61,6 +61,23 @@ app.get("/api/recipes/favourite", async (req, res) => {
     }
 });
 
+// get categories endpoint
+app.get("/api/recipes/categories", async (req, res) => {
+    const categories = await RecipeAPI.getRecipeCategories();
+    res.json(categories);
+});
+// get areas endpoint
+app.get("/api/recipes/areas", async (req, res) => {
+    const areas = await RecipeAPI.getRecipeAreas();
+    res.json(areas);
+});
+// get ingredients endpoint
+app.get("/api/recipes/ingredients", async (req, res) => {
+  const ingredients = await RecipeAPI.getRecipeIngredients();
+  res.json(ingredients);
+});
+
+// delete favourite endpoint
 app.delete("/api/recipes/favourite", async (req, res) => {
     const recipeId = req.body.recipeId;
 

@@ -63,3 +63,71 @@ export const getFavouriteRecipesByIds = async (ids: string[]) => {
   const results = await Promise.all(requests);
   return { results: results.filter(Boolean) };
 };
+
+// get categories
+export const getRecipeCategories = async () => {
+  const url = new URL("https://www.themealdb.com/api/json/v1/1/categories.php");
+
+  try {
+    const response = await fetch(url.toString());
+    const data = await response.json();
+    const category = data.categories || [];
+
+    const categories = category.map((category: any) => ({
+      id: category.idCategory,
+      category: category.strCategory,
+      categoryImage: category.strCategoryThumb,
+      categoryDescription: category.strCategoryDescription,
+    }));
+
+    return categories;
+  } catch (error) {
+    console.error("Error fetching categories:", error);
+    return null;
+  }
+};
+// get areas
+export const getRecipeAreas = async () => {
+  const url = new URL(
+    "https://www.themealdb.com/api/json/v1/1/list.php?a=list"
+  );
+
+  try {
+    const response = await fetch(url.toString());
+    const data = await response.json();
+    const area = data.meals || [];
+
+    const categories = area.map((area: any) => ({
+      area: area.strArea,
+    }));
+
+    return categories;
+  } catch (error) {
+    console.error("Error fetching categories:", error);
+    return null;
+  }
+}
+// get ingredients
+export const getRecipeIngredients = async () => {
+  const url = new URL(
+    "https://www.themealdb.com/api/json/v1/1/list.php?i=list"
+  );
+
+  try {
+    const response = await fetch(url.toString());
+    const data = await response.json();
+    const ingredient = data.meals || [];
+
+    const ingredients = ingredient.map((ingredient: any) => ({
+      id: ingredient.idIngredient,
+      ingredient: ingredient.strIngredient,
+      description: ingredient.strDescription,
+      type: ingredient.strType,
+    }));
+
+    return ingredients;
+  } catch (error) {
+    console.error("Error fetching categories:", error);
+    return null;
+  }
+};
