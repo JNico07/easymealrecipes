@@ -16,7 +16,9 @@ export const searchRecipes = async (searchTerm: string, page: number) => {
 
 // get Information API call
 export const getRecipeInformation = async (recipeId: string) => {
-  const url = new URL(`http://localhost:5000/api/recipes/${recipeId}/information`);
+  const url = new URL(
+    `http://localhost:5000/api/recipes/${recipeId}/information`
+  );
   const response = await fetch(url);
 
   if (!response.ok) {
@@ -76,16 +78,16 @@ export const getRecipeIngredients = async () => {
 export const addFavouriteRecipe = async (recipe: Recipe) => {
   const url = new URL("http://localhost:5000/api/recipes/favourite");
   const body = {
-    recipeId: recipe.id
-  }
+    recipeId: recipe.id,
+  };
 
   const response = await fetch(url, {
     method: "POST",
     headers: {
-      "Content-Type":"application/json"
+      "Content-Type": "application/json",
     },
-    body: JSON.stringify(body)
-  })
+    body: JSON.stringify(body),
+  });
 
   if (!response.ok) {
     throw new Error(`HTTP error! Status: ${response.status}`);
@@ -96,7 +98,7 @@ export const addFavouriteRecipe = async (recipe: Recipe) => {
 export const removeFavouriteRecipe = async (recipe: Recipe) => {
   const url = new URL("http://localhost:5000/api/recipes/favourite");
   const body = {
-    recipeId: recipe.id.toString()
+    recipeId: recipe.id.toString(),
   };
 
   const response = await fetch(url, {
@@ -110,4 +112,29 @@ export const removeFavouriteRecipe = async (recipe: Recipe) => {
   if (!response.ok) {
     throw new Error(`HTTP error! Status: ${response.status}`);
   }
+};
+
+export const searchRecipesWithFilters = async ({
+  category,
+  area,
+  ingredient,
+  page,
+}: {
+  category?: string;
+  area?: string;
+  ingredient?: string;
+  page: number;
+}) => {
+  const url = new URL("http://localhost:5000/api/recipes/advanced-search");
+  url.searchParams.append("page", String(page));
+  if (category) url.searchParams.append("category", category);
+  if (area) url.searchParams.append("area", area);
+  if (ingredient) url.searchParams.append("ingredient", ingredient);
+
+  const response = await fetch(url.toString());
+  if (!response.ok) {
+    throw new Error("Failed to fetch filtered recipes");
+  }
+
+  return response.json();
 };

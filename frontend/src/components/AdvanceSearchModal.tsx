@@ -4,12 +4,21 @@ import type { RecipeArea, RecipeCategory, RecipeIngredient } from "../types";
 
 interface Props {
   onClose: () => void;
+  onApplyFilters: (filters: {
+    category?: string;
+    area?: string;
+    ingredient?: string;
+  }) => void;
 }
 
-const AdvanceSearchModal = ({ onClose }: Props) => {
+const AdvanceSearchModal = ({ onClose, onApplyFilters }: Props) => {
   const [categories, setCategories] = useState<RecipeCategory[]>([]);
   const [areas, setAreas] = useState<RecipeArea[]>([]);
   const [ingredients, setIngredients] = useState<RecipeIngredient[]>([]);
+
+  const [selectedCategory, setSelectedCategory] = useState("");
+  const [selectedArea, setSelectedArea] = useState("");
+  const [selectedIngredient, setSelectedIngredient] = useState("");
 
   // Fetch categories when the modal opens
   useEffect(() => {
@@ -56,6 +65,8 @@ const AdvanceSearchModal = ({ onClose }: Props) => {
             </label>
             <select
               id="category"
+              value={selectedCategory}
+              onChange={(e) => setSelectedCategory(e.target.value)}
               className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2 focus:outline-none focus:ring focus:ring-blue-500"
             >
               <option value="">-- Select Category --</option>
@@ -77,6 +88,8 @@ const AdvanceSearchModal = ({ onClose }: Props) => {
             </label>
             <select
               id="area"
+              value={selectedArea}
+              onChange={(e) => setSelectedArea(e.target.value)}
               className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2 focus:outline-none focus:ring focus:ring-blue-500"
             >
               <option value="">-- Select Area --</option>
@@ -98,6 +111,8 @@ const AdvanceSearchModal = ({ onClose }: Props) => {
             </label>
             <select
               id="ingredient"
+              value={selectedIngredient}
+              onChange={(e) => setSelectedIngredient(e.target.value)}
               className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2 focus:outline-none focus:ring focus:ring-blue-500"
             >
               <option value="">-- Select Ingredient --</option>
@@ -111,7 +126,16 @@ const AdvanceSearchModal = ({ onClose }: Props) => {
         </div>
 
         <div className="pt-4 text-center">
-          <button className="bg-blue-600 text-white px-6 py-2 rounded hover:bg-blue-700">
+          <button
+            className="bg-blue-600 text-white px-6 py-2 rounded hover:bg-blue-700"
+            onClick={() =>
+              onApplyFilters({
+                category: selectedCategory,
+                area: selectedArea,
+                ingredient: selectedIngredient,
+              })
+            }
+            >
             Apply Filters
           </button>
         </div>

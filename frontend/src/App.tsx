@@ -7,7 +7,6 @@ import RecipeModal from "./components/RecipeModal";
 import { AiOutlineSearch } from "react-icons/ai";
 import AdvanceSearchModal from "./components/AdvanceSearchModal";
 
-
 type Tabs = "explore" | "favourites";
 
 const App = () => {
@@ -22,7 +21,6 @@ const App = () => {
   const pageNumber = useRef(1);
 
   const [showAdvancedSearch, setShowAdvancedSearch] = useState(false);
-
 
   // Fetch favourite recipes on initial load on "FAVOURITES" tab
   useEffect(() => {
@@ -41,7 +39,11 @@ const App = () => {
   useEffect(() => {
     const fetchRandomRecipes = async () => {
       try {
-        if (selectedTab === "explore" && searchTerm.trim() === "" && recipes.length === 0) {
+        if (
+          selectedTab === "explore" &&
+          searchTerm.trim() === "" &&
+          recipes.length === 0
+        ) {
           const response = await api.searchRecipes("", 1);
           setRecipes(response.results);
           pageNumber.current = 1;
@@ -97,6 +99,30 @@ const App = () => {
     }
   };
 
+  const applyAdvancedFilters = async ({
+    category,
+    area,
+    ingredient,
+  }: {
+    category?: string;
+    area?: string;
+    ingredient?: string;
+  }) => {
+    try {
+      const response = await api.searchRecipesWithFilters({
+        category,
+        area,
+        ingredient,
+        page: 1,
+      });
+
+      setRecipes(response.results);
+      pageNumber.current = 1;
+    } catch (error) {
+      console.error("Error applying advanced filters:", error);
+    }
+  };
+
   return (
     <div className="app-container">
       <div className="header">
@@ -146,6 +172,10 @@ const App = () => {
             {showAdvancedSearch && (
               <AdvanceSearchModal
                 onClose={() => setShowAdvancedSearch(false)}
+                onApplyFilters={(filters) => {
+                  applyAdvancedFilters(filters);
+                  setShowAdvancedSearch(false); // Close modal after applying
+                }}
               />
             )}
           </div>
