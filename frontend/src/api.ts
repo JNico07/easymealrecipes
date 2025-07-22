@@ -38,6 +38,40 @@ export const getFavouriteRecipes = async () => {
   return response.json();
 };
 
+// get Categories API call
+export const getRecipeCategories = async () => {
+  const url = new URL("http://localhost:5000/api/recipes/categories");
+  const response = await fetch(url);
+
+  if (!response.ok) {
+    throw new Error(`HTTP error! Status: ${response.status}`);
+  }
+
+  return response.json();
+};
+// get Areas API call
+export const getRecipeAreas = async () => {
+  const url = new URL("http://localhost:5000/api/recipes/areas");
+  const response = await fetch(url);
+
+  if (!response.ok) {
+    throw new Error(`HTTP error! Status: ${response.status}`);
+  }
+
+  return response.json();
+};
+// get Ingredients API call
+export const getRecipeIngredients = async () => {
+  const url = new URL("http://localhost:5000/api/recipes/ingredients");
+  const response = await fetch(url);
+
+  if (!response.ok) {
+    throw new Error(`HTTP error! Status: ${response.status}`);
+  }
+
+  return response.json();
+};
+
 // add Favourite API call
 export const addFavouriteRecipe = async (recipe: Recipe) => {
   const url = new URL("http://localhost:5000/api/recipes/favourite");

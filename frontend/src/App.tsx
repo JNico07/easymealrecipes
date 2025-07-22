@@ -5,6 +5,7 @@ import type { Recipe } from "./types";
 import RecipeCard from "./components/RecipeCard";
 import RecipeModal from "./components/RecipeModal";
 import { AiOutlineSearch } from "react-icons/ai";
+import AdvanceSearchModal from "./components/AdvanceSearchModal";
 
 
 type Tabs = "explore" | "favourites";
@@ -19,6 +20,9 @@ const App = () => {
   const [selectedTab, setSelectedTab] = useState<Tabs>("explore");
   const [favouriteRecipes, setFavouriteRecipes] = useState<Recipe[]>([]);
   const pageNumber = useRef(1);
+
+  const [showAdvancedSearch, setShowAdvancedSearch] = useState(false);
+
 
   // Fetch favourite recipes on initial load on "FAVOURITES" tab
   useEffect(() => {
@@ -132,9 +136,18 @@ const App = () => {
               </button>
             </form>
 
-            <button className="advanced-search-button">
+            <button
+              className="advanced-search-button"
+              onClick={() => setShowAdvancedSearch(true)}
+            >
               <p>Advanced Search</p>
             </button>
+
+            {showAdvancedSearch && (
+              <AdvanceSearchModal
+                onClose={() => setShowAdvancedSearch(false)}
+              />
+            )}
           </div>
 
           <div className="recipe-grid">
