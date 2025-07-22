@@ -77,6 +77,27 @@ app.get("/api/recipes/ingredients", async (req, res) => {
   res.json(ingredients);
 });
 
+// Advanced Search Endpoint
+app.get("/api/recipes/advanced-search", async (req, res) => {
+  const category = req.query.category as string;
+  const area = req.query.area as string;
+  const ingredient = req.query.ingredient as string;
+
+  try {
+    const results = await RecipeAPI.searchRecipesByFilters({
+      category,
+      area,
+      ingredient,
+    });
+
+    res.json(results);
+  } catch (error) {
+    console.error("Advanced search failed:", error);
+    res.status(500).json({ error: "Something went wrong" });
+  }
+});
+
+
 // delete favourite endpoint
 app.delete("/api/recipes/favourite", async (req, res) => {
     const recipeId = req.body.recipeId;

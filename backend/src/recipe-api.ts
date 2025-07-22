@@ -106,7 +106,7 @@ export const getRecipeAreas = async () => {
     console.error("Error fetching categories:", error);
     return null;
   }
-}
+};
 // get ingredients
 export const getRecipeIngredients = async () => {
   const url = new URL(
@@ -129,5 +129,49 @@ export const getRecipeIngredients = async () => {
   } catch (error) {
     console.error("Error fetching categories:", error);
     return null;
+  }
+};
+
+export const searchRecipesByFilters = async ({
+  category,
+  area,
+  ingredient,
+}: {
+  category?: string;
+  area?: string;
+  ingredient?: string;
+}) => {
+  let url: URL;
+
+  // Decide endpoint priority (use filter endpoints)
+  if (category) {
+    url = new URL("https://www.themealdb.com/api/json/v1/1/filter.php");
+    url.searchParams.set("c", category);
+  } else if (area) {
+    url = new URL("https://www.themealdb.com/api/json/v1/1/filter.php");
+    url.searchParams.set("a", area);
+  } else if (ingredient) {
+    url = new URL("https://www.themealdb.com/api/json/v1/1/filter.php");
+    url.searchParams.set("i", ingredient);
+  } else {
+    return { results: [] };
+  }
+
+  try {
+    const res = await fetch(url.toString());
+    const data = await res.json();
+    const meals = data.meals || [];
+
+    const results = meals.map((meal: any) => ({
+      id: meal.idMeal,
+      title: meal.strMeal,
+      image: meal.strMealThumb,
+      imageType: "jpg",
+    }));
+
+    return { results };
+  } catch (err) {
+    console.error(err);
+    return { results: [] };
   }
 };
