@@ -99,23 +99,30 @@ const App = () => {
     }
   };
 
-  const applyAdvancedFilters = async ({
-    category,
-    area,
-    ingredient,
-  }: {
+  // State to hold selected filters
+  const [selectedFilters, setSelectedFilters] = useState<{
+    category?: string;
+    area?: string;
+    ingredient?: string;
+  }>({
+    category: "",
+    area: "",
+    ingredient: "",
+  });
+
+  // Function to apply advanced filters
+  const applyAdvancedFilters = async (filters: {
     category?: string;
     area?: string;
     ingredient?: string;
   }) => {
     try {
       const response = await api.searchRecipesWithFilters({
-        category,
-        area,
-        ingredient,
+        ...filters,
         page: 1,
       });
 
+      setSelectedFilters(filters); // Save chosen filters
       setRecipes(response.results);
       pageNumber.current = 1;
     } catch (error) {
@@ -176,6 +183,7 @@ const App = () => {
                   applyAdvancedFilters(filters);
                   setShowAdvancedSearch(false); // Close modal after applying
                 }}
+                initialFilters={selectedFilters} // Pass the filters
               />
             )}
           </div>

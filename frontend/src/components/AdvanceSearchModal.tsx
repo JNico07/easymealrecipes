@@ -9,16 +9,29 @@ interface Props {
     area?: string;
     ingredient?: string;
   }) => void;
+  initialFilters: {
+    category?: string;
+    area?: string;
+    ingredient?: string;
+  };
 }
 
-const AdvanceSearchModal = ({ onClose, onApplyFilters }: Props) => {
+const AdvanceSearchModal = ({onClose, onApplyFilters, initialFilters}: Props) => {
+  // State to hold categories, areas, and ingredients
   const [categories, setCategories] = useState<RecipeCategory[]>([]);
   const [areas, setAreas] = useState<RecipeArea[]>([]);
   const [ingredients, setIngredients] = useState<RecipeIngredient[]>([]);
+  // State to hold selected filters
+  const [selectedCategory, setSelectedCategory] = useState(initialFilters.category || "");
+  const [selectedArea, setSelectedArea] = useState(initialFilters.area || "");
+  const [selectedIngredient, setSelectedIngredient] = useState(initialFilters.ingredient || "");
 
-  const [selectedCategory, setSelectedCategory] = useState("");
-  const [selectedArea, setSelectedArea] = useState("");
-  const [selectedIngredient, setSelectedIngredient] = useState("");
+  // Effect to set initial filter values when the modal opens
+  useEffect(() => {
+    setSelectedCategory(initialFilters.category || "");
+    setSelectedArea(initialFilters.area || "");
+    setSelectedIngredient(initialFilters.ingredient || "");
+  }, [initialFilters]);
 
   // Fetch categories when the modal opens
   useEffect(() => {
@@ -69,7 +82,7 @@ const AdvanceSearchModal = ({ onClose, onApplyFilters }: Props) => {
               onChange={(e) => setSelectedCategory(e.target.value)}
               className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2 focus:outline-none focus:ring focus:ring-blue-500"
             >
-              <option value="">-- Select Category --</option>
+              <option value="">{initialFilters.category}</option>
               {categories.map((category) => (
                 <option key={category.id} value={category.category}>
                   {category.category}
@@ -92,7 +105,7 @@ const AdvanceSearchModal = ({ onClose, onApplyFilters }: Props) => {
               onChange={(e) => setSelectedArea(e.target.value)}
               className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2 focus:outline-none focus:ring focus:ring-blue-500"
             >
-              <option value="">-- Select Area --</option>
+              <option value="">{initialFilters.area}</option>
               {areas.map((area) => (
                 <option key={area.area} value={area.area}>
                   {area.area}
@@ -115,7 +128,7 @@ const AdvanceSearchModal = ({ onClose, onApplyFilters }: Props) => {
               onChange={(e) => setSelectedIngredient(e.target.value)}
               className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2 focus:outline-none focus:ring focus:ring-blue-500"
             >
-              <option value="">-- Select Ingredient --</option>
+              <option value="">{initialFilters.ingredient}</option>
               {ingredients.map((ingredient) => (
                 <option key={ingredient.id} value={ingredient.ingredient}>
                   {ingredient.ingredient}
@@ -135,7 +148,7 @@ const AdvanceSearchModal = ({ onClose, onApplyFilters }: Props) => {
                 ingredient: selectedIngredient,
               })
             }
-            >
+          >
             Apply Filters
           </button>
         </div>
