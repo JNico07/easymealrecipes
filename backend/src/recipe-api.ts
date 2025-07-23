@@ -131,7 +131,7 @@ export const getRecipeIngredients = async () => {
     return null;
   }
 };
-
+// Search recipes by filters (category, area, ingredient)
 export const searchRecipesByFilters = async ({
   category,
   area,

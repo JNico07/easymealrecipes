@@ -15,5 +15,17 @@ datasource db {
 
 model FavouriteRecipes {
   id       Int    @id @default(autoincrement())
-  recipeId String @unique
+  recipeId String
+  
+  userId   Int
+  user     User   @relation(fields: [userId], references: [id])
+
+  @@unique([recipeId, userId]) // Prevent duplicate recipe for the same user
+}
+
+model User {
+  id       Int                 @id @default(autoincrement())
+  username String              @unique
+  password String
+  favourites FavouriteRecipes[] // One-to-many relation
 }
