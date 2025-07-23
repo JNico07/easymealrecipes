@@ -29,10 +29,11 @@ export const getRecipeInformation = async (recipeId: string) => {
 };
 
 // get Favourite API call
-export const getFavouriteRecipes = async () => {
+export const getFavouriteRecipes = async (userId: number) => {
   const url = new URL("http://localhost:5000/api/recipes/favourite");
-  const response = await fetch(url);
+  url.searchParams.append("userId", userId.toString());
 
+  const response = await fetch(url);
   if (!response.ok) {
     throw new Error(`HTTP error! Status: ${response.status}`);
   }
@@ -75,10 +76,11 @@ export const getRecipeIngredients = async () => {
 };
 
 // add Favourite API call
-export const addFavouriteRecipe = async (recipe: Recipe) => {
+export const addFavouriteRecipe = async (recipe: Recipe, userId: number) => {
   const url = new URL("http://localhost:5000/api/recipes/favourite");
   const body = {
-    recipeId: recipe.id,
+    recipeId: recipe.id.toString(), // Convert to string to match schema
+    userId: userId
   };
 
   const response = await fetch(url, {
@@ -95,10 +97,11 @@ export const addFavouriteRecipe = async (recipe: Recipe) => {
 };
 
 // remove Favourite API call
-export const removeFavouriteRecipe = async (recipe: Recipe) => {
+export const removeFavouriteRecipe = async (recipe: Recipe, userId: number) => {
   const url = new URL("http://localhost:5000/api/recipes/favourite");
   const body = {
     recipeId: recipe.id.toString(),
+    userId: userId
   };
 
   const response = await fetch(url, {
@@ -137,4 +140,31 @@ export const searchRecipesWithFilters = async ({
   }
 
   return response.json();
+};
+
+export const login = async (username: string, password: string) => {
+  const res = await fetch("http://localhost:5000/api/login", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ username, password }),
+  });
+
+  if (!res.ok) {
+    throw new Error("Login failed");
+  }
+
+  const data = await res.json();
+  console.log(data);
+  return data;
+};
+
+export const signup = async () => {
+  const res = await fetch("http://localhost:5000/api/signup", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ username: "nico", password: "1234" }),
+  });
+
+  const data = await res.json();
+  console.log(data);
 };

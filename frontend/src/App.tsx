@@ -6,10 +6,15 @@ import RecipeCard from "./components/RecipeCard";
 import RecipeModal from "./components/RecipeModal";
 import { AiOutlineSearch } from "react-icons/ai";
 import AdvanceSearchModal from "./components/AdvanceSearchModal";
+import LoginForm from "./components/LoginForm";
 
 type Tabs = "explore" | "favourites";
 
 const App = () => {
+  const [userId, setUserId] = useState<number | null>(null);
+  // State to manage login status
+  const [isLogin, setIsLogin] = useState<boolean>(false);
+
   const [searchTerm, setSearchTerm] = useState<string>("");
   const [recipes, setRecipes] = useState<Recipe[]>([]);
   const [selectedRecipe, setSelectedRecipe] = useState<Recipe | undefined>(
@@ -25,15 +30,16 @@ const App = () => {
   // Fetch favourite recipes on initial load on "FAVOURITES" tab
   useEffect(() => {
     const fetchFavouriteRecipes = async () => {
+      if (!userId) return; // Prevent fetching if not logged in
       try {
-        const favouriteRecipes = await api.getFavouriteRecipes();
+        const favouriteRecipes = await api.getFavouriteRecipes(userId);
         setFavouriteRecipes(favouriteRecipes.results);
       } catch (error) {
         console.log(error);
       }
     };
-    fetchFavouriteRecipes();
-  }, []);
+    if (userId) fetchFavouriteRecipes();
+  }, [userId, selectedTab]);
 
   // Fetch random recipes when the app loads on "SEARCH" tab
   useEffect(() => {
@@ -79,8 +85,9 @@ const App = () => {
   };
 
   const addFavouriteRecipe = async (recipe: Recipe) => {
+    if (!userId) return; // prevent sending if not logged in
     try {
-      await api.addFavouriteRecipe(recipe);
+      await api.addFavouriteRecipe(recipe, userId);
       setFavouriteRecipes([...favouriteRecipes, recipe]);
     } catch (error) {
       console.log(error);
@@ -89,7 +96,7 @@ const App = () => {
 
   const removeFavouriteRecipe = async (recipe: Recipe) => {
     try {
-      await api.removeFavouriteRecipe(recipe);
+      await api.removeFavouriteRecipe(recipe, userId!);
       const updatedRecipes = favouriteRecipes.filter(
         (favRecipes) => recipe.id.toString() !== favRecipes.id.toString()
       );
@@ -130,12 +137,30 @@ const App = () => {
     }
   };
 
+  if (!isLogin) {
+    return (
+      <LoginForm
+        onLoginSuccess={(userId) => {
+          setUserId(userId);
+          setIsLogin(true);
+        }}
+      />
+    );
+  }
+
   return (
     <div className="app-container">
       <div className="header">
         <img src="/hero-image.jpg" alt="hero-image" />
         <div className="title">My Recipe App</div>
       </div>
+
+      <button
+        onClick={() => setIsLogin(false)}
+        className="absolute top-4 right-4 px-4 py-2 bg-red-500 text-white rounded"
+      >
+        Logout
+      </button>
 
       <div className="tabs">
         <h1
