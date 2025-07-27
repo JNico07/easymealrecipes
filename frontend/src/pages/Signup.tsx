@@ -1,21 +1,22 @@
 import { useState } from "react";
-import { login } from "../api";
+import { signup } from "../api";
 
 interface Props {
-  onLoginSuccess: (userId: number) => void;
+  onSignupSuccess: (userId: number) => void;
+  onCancel: () => void;
 }
 
-const LoginForm = ({ onLoginSuccess }: Props) => {
+const Signup = ({ onSignupSuccess, onCancel }: Props) => {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
-      const { userId } = await login(username, password);
-      onLoginSuccess(userId); // Notify parent component of successful login
+      const { userId } = await signup(username, password);
+      onSignupSuccess(userId); // Notify parent component of successful login
     } catch (err) {
-      console.error("Login failed", err);
+      console.error("Signup failed", err);
     }
   };
 
@@ -25,7 +26,7 @@ const LoginForm = ({ onLoginSuccess }: Props) => {
         onSubmit={handleSubmit}
         className="bg-white p-8 rounded-lg shadow-md w-full max-w-sm"
       >
-        <h2 className="text-2xl font-bold mb-6 text-center">Login</h2>
+        <h2 className="text-2xl font-bold mb-6 text-center">Signup</h2>
 
         <div className="mb-4">
           <label className="block text-sm font-medium mb-1">Username</label>
@@ -53,11 +54,21 @@ const LoginForm = ({ onLoginSuccess }: Props) => {
           type="submit"
           className="w-full bg-blue-500 text-white py-2 px-4 rounded-md hover:bg-blue-600 transition"
         >
-          Login
+          Signup
         </button>
       </form>
+
+      <div>
+        <button
+          type="button"
+          onClick={onCancel}
+          className="mt-4 text-sm text-gray-600 hover:underline"
+        >
+          Back to Login
+        </button>
+      </div>
     </div>
   );
 };
 
-export default LoginForm;
+export default Signup;

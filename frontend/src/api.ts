@@ -80,7 +80,7 @@ export const addFavouriteRecipe = async (recipe: Recipe, userId: number) => {
   const url = new URL("http://localhost:5000/api/recipes/favourite");
   const body = {
     recipeId: recipe.id.toString(), // Convert to string to match schema
-    userId: userId
+    userId: userId,
   };
 
   const response = await fetch(url, {
@@ -101,7 +101,7 @@ export const removeFavouriteRecipe = async (recipe: Recipe, userId: number) => {
   const url = new URL("http://localhost:5000/api/recipes/favourite");
   const body = {
     recipeId: recipe.id.toString(),
-    userId: userId
+    userId: userId,
   };
 
   const response = await fetch(url, {
@@ -158,13 +158,18 @@ export const login = async (username: string, password: string) => {
   return data;
 };
 
-export const signup = async () => {
+export const signup = async (username: string, password: string) => {
   const res = await fetch("http://localhost:5000/api/signup", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ username: "nico", password: "1234" }),
+    body: JSON.stringify({ username, password }),
   });
+
+  if (!res.ok) {
+    throw new Error("Login failed");
+  }
 
   const data = await res.json();
   console.log(data);
+  return data;
 };
