@@ -13,7 +13,8 @@ const prismaClient = new PrismaClient();
 app.use(express.json());
 app.use(cors());
 
-// GET search endpoint
+// GET - START
+// search endpoint
 app.get("/api/recipes/search", async (req, res) => {
   // GET http://localhost/api/recipes/search?searchTerm=burger&page=1
   const searchTerm = req.query.searchTerm as string;
@@ -21,16 +22,14 @@ app.get("/api/recipes/search", async (req, res) => {
 
   res.json(results);
 });
-
-// GET information endpoint
+// information endpoint
 app.get("/api/recipes/:recipeId/information", async (req, res) => {
   const recipeId = req.params.recipeId;
   const results = await RecipeAPI.getRecipeInformation(recipeId);
 
   res.json(results);
 });
-
-// GET favourite endpoint
+// favourite endpoint
 app.get("/api/recipes/favourite", async (req, res) => {
   const userId = req.query.userId as string;
   if (!userId) {
@@ -52,24 +51,22 @@ app.get("/api/recipes/favourite", async (req, res) => {
     res.status(500).json({ error: "Oops, something went wrong" });
   }
 });
-
-// GET categories endpoint
+// categories endpoint
 app.get("/api/recipes/categories", async (req, res) => {
   const categories = await RecipeAPI.getRecipeCategories();
   res.json(categories);
 });
-// GET areas endpoint
+// areas endpoint
 app.get("/api/recipes/areas", async (req, res) => {
   const areas = await RecipeAPI.getRecipeAreas();
   res.json(areas);
 });
-// GET ingredients endpoint
+// ingredients endpoint
 app.get("/api/recipes/ingredients", async (req, res) => {
   const ingredients = await RecipeAPI.getRecipeIngredients();
   res.json(ingredients);
 });
-
-// GET Advanced Search Endpoint
+// Advanced Search Endpoint
 app.get("/api/recipes/advanced-search", async (req, res) => {
   const category = req.query.category as string;
   const area = req.query.area as string;
@@ -88,8 +85,10 @@ app.get("/api/recipes/advanced-search", async (req, res) => {
     res.status(500).json({ error: "Something went wrong" });
   }
 });
+// GET - END
 
-// POST favourite endpoint
+// POST - START
+// favourite endpoint
 app.post("/api/recipes/favourite", async (req, res) => {
   const { recipeId, userId } = req.body;
 
@@ -119,8 +118,35 @@ app.post("/api/recipes/favourite", async (req, res) => {
     res.status(500).json({ error: "Oops, something went wrong" });
   }
 });
+// login endpoint
+app.post("/api/login", async (req, res) => {
+  const { username, password } = req.body;
 
-// POST signup endpoint
+  if (!username || !password) {
+    res.status(400).json({ error: "Username and password are required." });
+    return;
+  }
+
+  // find user by username from the database
+  const user = await prismaClient.user.findUnique({
+    where: { username },
+  });
+  // Check if user exists
+  if (!user) {
+    res.status(404).json({ error: "User not found." });
+    return;
+  }
+  // authenticate password
+  const isPasswordValid = await bcrypt.compare(password, user.password);
+  // Check if password is valid
+  if (!isPasswordValid) {
+    res.status(401).json({ error: "Invalid username or password. " });
+    return;
+  }
+
+  res.json({ message: "Login successful", userId: user.id });
+});
+// signup endpoint
 app.post("/api/signup", async (req, res) => {
   const { username, password } = req.body;
 
@@ -150,37 +176,10 @@ app.post("/api/signup", async (req, res) => {
   // Respond with success
   res.status(201).json({ message: "User created!", userId: newUser.id });
 });
+// POST - END
 
-// POST login endpoint
-app.post("/api/login", async (req, res) => {
-  const { username, password } = req.body;
-
-  if (!username || !password) {
-    res.status(400).json({ error: "Username and password are required." });
-    return;
-  }
-
-  // find user by username from the database
-  const user = await prismaClient.user.findUnique({
-    where: { username },
-  });
-  // Check if user exists
-  if (!user) {
-    res.status(404).json({ error: "User not found." });
-    return;
-  }
-  // authenticate password
-  const isPasswordValid = await bcrypt.compare(password, user.password);
-  // Check if password is valid
-  if (!isPasswordValid) {
-    res.status(401).json({ error: "Invalid username or password. " });
-    return;
-  }
-
-  res.json({ message: "Login successful", userId: user.id });
-});
-
-// DELETE favourite endpoint
+// DELETE 
+// favourite endpoint
 app.delete("/api/recipes/favourite", async (req, res) => {
   const { recipeId, userId } = req.body;
 
