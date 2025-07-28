@@ -2,14 +2,16 @@ import { Routes, Route, Navigate, useNavigate } from "react-router-dom";
 import { useState } from "react";
 import LoginPage from "./pages/Login";
 import SignupPage from "./pages/Signup";
-import HomePage from "./pages/Home";
+import Home from "./pages/Home";
 
 const App = () => {
   const [userId, setUserId] = useState<number | null>(null);
+  const [username, setUserName] = useState<string | null>(null);
   const navigate = useNavigate();
 
-  const handleLoginSuccess = (newUserId: number) => {
+  const handleLoginSuccess = (newUserId: number, newUserName: string) => {
     setUserId(newUserId);
+    setUserName(newUserName);
     navigate("/");
   };
 
@@ -22,7 +24,7 @@ const App = () => {
     <Routes>
       <Route
         path="/"
-        element={userId ? <HomePage userId={userId} /> : <Navigate to="/login" />}
+        element={userId ? <Home userId={userId} username={username} /> : <Navigate to="/login" />}
       />
       <Route
         path="/login"

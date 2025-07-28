@@ -11,9 +11,10 @@ type Tabs = "explore" | "favourites";
 
 interface HomeProps {
   userId: number;
+  username: string | null;
 }
 
-const Home = ({ userId }: HomeProps) => {
+const Home = ({ userId, username }: HomeProps) => {
   const [searchTerm, setSearchTerm] = useState<string>("");
   const [recipes, setRecipes] = useState<Recipe[]>([]);
   const [selectedRecipe, setSelectedRecipe] = useState<Recipe | undefined>(
@@ -49,7 +50,7 @@ const Home = ({ userId }: HomeProps) => {
           searchTerm.trim() === "" &&
           recipes.length === 0
         ) {
-          const response = await api.searchRecipes("", 1);
+          const response = await api.getRandomRecipes();
           setRecipes(response.results);
           pageNumber.current = 1;
         }
@@ -73,11 +74,20 @@ const Home = ({ userId }: HomeProps) => {
   };
 
   const handleViewMoreClick = async () => {
-    const nextPage = pageNumber.current + 1;
     try {
-      const nextRecipes = await api.searchRecipes(searchTerm, nextPage);
-      setRecipes([...recipes, ...nextRecipes.results]);
-      pageNumber.current = nextPage;
+      let nextRecipes;
+
+      if (searchTerm.trim() === "" && selectedFilters.category === "") {
+        const res = await api.getRandomRecipes();
+        nextRecipes = res.results;
+      } else {
+        const nextPage = pageNumber.current + 1;
+        const res = await api.searchRecipes(searchTerm, nextPage);
+        nextRecipes = res.results;
+        pageNumber.current = nextPage;
+      }
+
+      setRecipes([...recipes, ...nextRecipes]);
     } catch (e) {
       console.log(e);
     }
@@ -139,7 +149,11 @@ const Home = ({ userId }: HomeProps) => {
   return (
     <>
       <nav className="flex items-center justify-between bg-white shadow px-6 py-4 sticky top-0 z-40">
-        <div className="text-xl font-bold text-gray-800">My Recipe App</div>
+        <div className="text-xl font-bold text-gray-800">
+          {username ? username.charAt(0).toUpperCase() + username.slice(1) : ""}
+          's Recipe App
+        </div>
+
         <div className="flex gap-4">
           <div className="flex gap-4 border-b">
             {["explore", "favourites"].map((tab) => (
@@ -156,7 +170,7 @@ const Home = ({ userId }: HomeProps) => {
               </button>
             ))}
           </div>
-          
+
           <button
             onClick={() => {
               localStorage.removeItem("userId");
@@ -213,16 +227,16 @@ const Home = ({ userId }: HomeProps) => {
               )}
             </div>
 
-            <div className="grid gap-8 grid-cols-[repeat(auto-fill,minmax(400px,1fr))]">
-              {recipes.map((recipe) => {
-                const isFavorite = favouriteRecipes.some(
-                  (favRecipe) =>
-                    favRecipe.id.toString() === recipe.id.toString()
-                );
+            <div className="grid gap-8 grid-cols-[repeat(auto-fill,minmax(320px,1fr))]">
+              {recipes.map((recipe, index) => {
+                // Add null checks and ensure both IDs exist before comparison
+                const isFavorite = Boolean(recipe.id && favouriteRecipes.some(
+                  (favRecipe) => favRecipe.id && favRecipe.id.toString() === recipe.id.toString()
+                ));
 
                 return (
                   <RecipeCard
-                    key={recipe.id.toString()}
+                    key={recipe.id?.toString() || `fallback-key-${index}`}
                     recipe={recipe}
                     onClick={() => setSelectedRecipe(recipe)}
                     onFavouriteButtonClick={
@@ -245,10 +259,10 @@ const Home = ({ userId }: HomeProps) => {
 
         {/* Favourites Tab */}
         {selectedTab === "favourites" && (
-          <div className="grid gap-8 grid-cols-[repeat(auto-fill,minmax(400px,1fr))]">
-            {favouriteRecipes.map((recipe) => (
+          <div className="grid gap-8 grid-cols-[repeat(auto-fill,minmax(320px,1fr))]">
+            {favouriteRecipes.map((recipe, index) => (
               <RecipeCard
-                key={recipe.id.toString()}
+                key={recipe.id?.toString() || `fallback-key-${index}`}
                 recipe={recipe}
                 onClick={() => setSelectedRecipe(recipe)}
                 onFavouriteButtonClick={removeFavouriteRecipe}

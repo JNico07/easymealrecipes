@@ -2,7 +2,7 @@ import { useState } from "react";
 import { login } from "../api";
 
 interface Props {
-  onLoginSuccess: (userId: number) => void;
+  onLoginSuccess: (userId: number, username: string) => void;
   onCreateAccountClick: () => void;
 }
 
@@ -14,7 +14,7 @@ const Login = ({ onLoginSuccess, onCreateAccountClick }: Props) => {
     e.preventDefault();
     try {
       const { userId } = await login(username, password);
-      onLoginSuccess(userId); // Notify parent component of successful login
+      onLoginSuccess(userId, username); // Notify parent component of successful login
     } catch (err) {
       console.error("Login failed", err);
     }

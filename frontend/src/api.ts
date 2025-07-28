@@ -74,6 +74,13 @@ export const getRecipeIngredients = async () => {
 
   return response.json();
 };
+// 
+export const getRandomRecipes = async () => {
+  const url = new URL("http://localhost:5000/api/recipes/random");
+  const response = await fetch(url);
+  if (!response.ok) throw new Error("Failed to fetch random recipes");
+  return response.json();
+};
 
 // add Favourite API call
 export const addFavouriteRecipe = async (recipe: Recipe, userId: number) => {
