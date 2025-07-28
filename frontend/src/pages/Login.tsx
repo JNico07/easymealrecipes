@@ -21,10 +21,13 @@ const Login = ({ onLoginSuccess, onCreateAccountClick }: Props) => {
   };
 
   return (
-    <div className="flex min-h-screen items-center justify-center bg-gray-100">
+    <div
+      className="flex min-h-screen items-center justify-center bg-cover bg-center"
+      style={{ backgroundImage: 'url("/hero-image.jpg")' }}
+    >
       <form
         onSubmit={handleSubmit}
-        className="bg-white p-8 rounded-lg shadow-md w-full max-w-sm"
+        className="bg-white bg-opacity-90 p-8 rounded-lg shadow-md w-full max-w-sm"
       >
         <h2 className="text-2xl font-bold mb-6 text-center">Login</h2>
 
@@ -58,12 +61,12 @@ const Login = ({ onLoginSuccess, onCreateAccountClick }: Props) => {
         </button>
       </form>
 
-      <div className="mt-4 text-center">
+      <div className="absolute bottom-8 text-black text-sm">
         <p>
           Don't have an account?{" "}
           <button
             onClick={onCreateAccountClick}
-            className="text-blue-500 hover:underline"
+            className="underline text-blue-900 hover:text-black font-bold"
           >
             Create account
           </button>
