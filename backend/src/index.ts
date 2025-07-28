@@ -6,6 +6,7 @@ import cors from "cors";
 import * as RecipeAPI from "./recipe-api";
 import { Prisma, PrismaClient } from "@prisma/client";
 import bcrypt from "bcrypt";
+import fetch from "node-fetch";
 
 const app = express();
 const prismaClient = new PrismaClient();
@@ -83,6 +84,16 @@ app.get("/api/recipes/advanced-search", async (req, res) => {
   } catch (error) {
     console.error("Advanced search failed:", error);
     res.status(500).json({ error: "Something went wrong" });
+  }
+});
+// Random Recipe Endpoint
+app.get("/api/recipes/random", async (req, res) => {
+  try {
+    const { results } = await RecipeAPI.getRandomRecipes(10);
+    res.json({ results });
+  } catch (error) {
+    console.error(error)
+    res.status(500).json({ error: "Failed to fetch random meals" });
   }
 });
 // GET - END

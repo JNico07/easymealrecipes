@@ -175,3 +175,39 @@ export const searchRecipesByFilters = async ({
     return { results: [] };
   }
 };
+
+// get randomly
+export const getRandomRecipes = async (count = 10) => {
+  type Meal = {
+    idMeal: string;
+    strMeal: string;
+    strMealThumb: string;
+  };
+
+  type MealDBResponse = {
+    meals: Meal[];
+  };
+
+  try {
+    const promises = Array.from({ length: count }, () =>
+      fetch("https://www.themealdb.com/api/json/v1/1/random.php").then(
+        (res) => res.json() as Promise<MealDBResponse>
+      )
+    );
+
+    const results = await Promise.all(promises);
+    const recipes = results
+      .map((r) => r.meals[0])
+      .map((meal) => ({
+        id: parseInt(meal.idMeal),
+        title: meal.strMeal,
+        image: meal.strMealThumb,
+        imageType: "jpg",
+      }));
+
+    return { results: recipes };
+  } catch (err) {
+    console.error("Error fetching random meals:", err);
+    return { results: [] };
+  }
+};
