@@ -6,6 +6,8 @@ import RecipeCard from "../components/RecipeCard";
 import RecipeModal from "../components/RecipeModal";
 import { AiOutlineSearch } from "react-icons/ai";
 import AdvanceSearchModal from "../components/AdvanceSearchModal";
+import { logout } from "../api";
+import { useNavigate } from "react-router-dom";
 
 type Tabs = "explore" | "favourites";
 
@@ -26,6 +28,7 @@ const Home = ({ userId, username }: HomeProps) => {
   const pageNumber = useRef(1);
 
   const [showAdvancedSearch, setShowAdvancedSearch] = useState(false);
+  const navigate = useNavigate();
 
   // Fetch favourite recipes on initial load on "FAVOURITES" tab
   useEffect(() => {
@@ -146,6 +149,15 @@ const Home = ({ userId, username }: HomeProps) => {
     }
   };
 
+  const handleLogout = async () => {
+    try {
+      await logout();
+      navigate("/login");
+    } catch (error) {
+      console.error("Logout: ", error);
+    }
+  };
+
   return (
     <>
       <nav className="flex items-center justify-between bg-white shadow px-6 py-4 sticky top-0 z-40">
@@ -173,8 +185,9 @@ const Home = ({ userId, username }: HomeProps) => {
 
           <button
             onClick={() => {
-              localStorage.removeItem("userId");
-              window.location.href = "/login";
+              {
+                handleLogout();
+              }
             }}
             className="bg-red-500 text-white px-3 py-1 rounded-md hover:bg-red-600"
           >
@@ -230,9 +243,14 @@ const Home = ({ userId, username }: HomeProps) => {
             <div className="grid gap-8 grid-cols-[repeat(auto-fill,minmax(320px,1fr))]">
               {recipes.map((recipe, index) => {
                 // Add null checks and ensure both IDs exist before comparison
-                const isFavorite = Boolean(recipe.id && favouriteRecipes.some(
-                  (favRecipe) => favRecipe.id && favRecipe.id.toString() === recipe.id.toString()
-                ));
+                const isFavorite = Boolean(
+                  recipe.id &&
+                    favouriteRecipes.some(
+                      (favRecipe) =>
+                        favRecipe.id &&
+                        favRecipe.id.toString() === recipe.id.toString()
+                    )
+                );
 
                 return (
                   <RecipeCard

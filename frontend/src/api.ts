@@ -1,4 +1,4 @@
-import type { Recipe } from "./types";
+import type { Recipe, User } from "./types";
 
 // Search API call
 export const searchRecipes = async (searchTerm: string, page: number) => {
@@ -74,13 +74,28 @@ export const getRecipeIngredients = async () => {
 
   return response.json();
 };
-// 
+// get Random
 export const getRandomRecipes = async () => {
   const url = new URL("http://localhost:5000/api/recipes/random");
   const response = await fetch(url);
   if (!response.ok) throw new Error("Failed to fetch random recipes");
   return response.json();
 };
+//
+export const getCurrentUser = async (): Promise<{ user: User }> => {
+  const res = await fetch("http://localhost:5000/api/me", {
+    method: "GET",
+    credentials: "include", // Send cookie
+  });
+
+  if (!res.ok) {
+    throw new Error("Not Authenticate");
+  }
+
+  const data = await res.json();
+  console.log(data); 
+  return data; // { id, username }
+}
 
 // add Favourite API call
 export const addFavouriteRecipe = async (recipe: Recipe, userId: number) => {
@@ -152,22 +167,23 @@ export const searchRecipesWithFilters = async ({
 export const login = async (username: string, password: string) => {
   const res = await fetch("http://localhost:5000/api/login", {
     method: "POST",
+    credentials: "include",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({ username, password }),
   });
 
   if (!res.ok) {
-    throw new Error("Login failed");
+    const data = await res.json();
+    throw new Error(data.error || "Login failed");
   }
 
-  const data = await res.json();
-  console.log(data);
-  return data;
+  return res.json();
 };
 
 export const signup = async (username: string, password: string) => {
   const res = await fetch("http://localhost:5000/api/signup", {
     method: "POST",
+    credentials: "include",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({ username, password }),
   });
@@ -180,3 +196,16 @@ export const signup = async (username: string, password: string) => {
   console.log(data);
   return data;
 };
+
+export const logout = async () => {
+  const res = await fetch("http://localhost:5000/api/logout", {
+    method: "POST",
+    credentials: "include",
+  });
+  
+  if (!res.ok) {
+    throw new Error("Login failed");
+  }
+
+  return res.json();
+}

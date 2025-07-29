@@ -1,22 +1,30 @@
 import { useState } from "react";
-import { login } from "../api";
+import { getCurrentUser, login } from "../api";
 
 interface Props {
   onLoginSuccess: (userId: number, username: string) => void;
   onCreateAccountClick: () => void;
 }
 
+function getErrorMessage(error: unknown): string {
+  if (error instanceof Error) return error.message;
+  return String(error);
+}
+
 const Login = ({ onLoginSuccess, onCreateAccountClick }: Props) => {
-  const [username, setUsername] = useState("");
-  const [password, setPassword] = useState("");
+  const [username, setUsername] = useState<string>("");
+  const [password, setPassword] = useState<string>("");
+  const [errorMsg, setErrorMsg] = useState<string>("");
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
-      const { userId } = await login(username, password);
-      onLoginSuccess(userId, username); // Notify parent component of successful login
-    } catch (err) {
-      console.error("Login failed", err);
+      await login(username, password); // log in and sets cookie
+      const { user } = await getCurrentUser(); // get user info
+      onLoginSuccess(user.id, user.username); // Notify parent component of successful login
+    } catch (error) {
+      console.error("Login failed", error);
+      setErrorMsg(getErrorMessage(error));
     }
   };
 
@@ -52,6 +60,15 @@ const Login = ({ onLoginSuccess, onCreateAccountClick }: Props) => {
             required
           />
         </div>
+
+        {errorMsg && (
+          <div
+            role="alert"
+            className="mb-4 text-sm text-red-600 bg-red-100 border border-red-300 rounded px-2 py-1 text-center"
+          >
+            {errorMsg}
+          </div>
+        )}
 
         <button
           type="submit"
