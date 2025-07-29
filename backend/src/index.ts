@@ -3,6 +3,8 @@ dotenv.config();
 
 import express from "express";
 import cors from "cors";
+import jwt from "jsonwebtoken";
+import cookieParser from "cookie-parser";
 import * as RecipeAPI from "./recipe-api";
 import { Prisma, PrismaClient } from "@prisma/client";
 import bcrypt from "bcrypt";
@@ -11,8 +13,14 @@ import fetch from "node-fetch";
 const app = express();
 const prismaClient = new PrismaClient();
 
+app.use(cookieParser());
 app.use(express.json());
-app.use(cors());
+app.use(
+  cors({
+    origin: "http://localhost:5173",
+    credentials: true, // allow cookies
+  })
+);
 
 // GET - START
 // search endpoint
@@ -40,7 +48,7 @@ app.get("/api/recipes/favourite", async (req, res) => {
   // Fetch favourite recipes for the logged-in user
   try {
     const recipes = await prismaClient.favouriteRecipes.findMany({
-        where: { userId: parseInt(userId) },
+      where: { userId: parseInt(userId) },
     });
     const recipeIds = recipes.map((recipe) => recipe.recipeId.toString());
 
@@ -92,14 +100,13 @@ app.get("/api/recipes/random", async (req, res) => {
     const { results } = await RecipeAPI.getRandomRecipes(10);
     res.json({ results });
   } catch (error) {
-    console.error(error)
+    console.error(error);
     res.status(500).json({ error: "Failed to fetch random meals" });
   }
 });
 // GET - END
 
 // POST - START
-// favourite endpoint
 app.post("/api/recipes/favourite", async (req, res) => {
   const { recipeId, userId } = req.body;
 
@@ -129,7 +136,7 @@ app.post("/api/recipes/favourite", async (req, res) => {
     res.status(500).json({ error: "Oops, something went wrong" });
   }
 });
-// login endpoint
+
 app.post("/api/login", async (req, res) => {
   const { username, password } = req.body;
 
@@ -155,9 +162,25 @@ app.post("/api/login", async (req, res) => {
     return;
   }
 
-  res.json({ message: "Login successful", userId: user.id });
+  // Sign JWT
+  const token = jwt.sign(
+    { id: user.id, username: user.username },
+    process.env.JWT_SECRET!,
+    {
+      expiresIn: "7d",
+    }
+  );
+  // Set cookie
+  res.cookie("token", token, {
+    httpOnly: true,
+    secure: process.env.NODE_ENV === "production",
+    sameSite: "lax",
+    maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
+  });
+
+  res.json({ message: "Login successful" });
 });
-// signup endpoint
+
 app.post("/api/signup", async (req, res) => {
   const { username, password } = req.body;
 
@@ -187,9 +210,42 @@ app.post("/api/signup", async (req, res) => {
   // Respond with success
   res.status(201).json({ message: "User created!", userId: newUser.id });
 });
+
+app.get("/api/me", async (req, res) => {
+  const token = req.cookies.token;
+
+  if (!token) res.status(401).json({ error: "Not authenticated" });
+
+  try {
+    const payload = jwt.verify(token, process.env.JWT_SECRET!) as {
+      id: number;
+    };
+
+    const user = await prismaClient.user.findUnique({
+      where: { id: payload.id },
+      select: { id: true, username: true },
+    });
+
+    if (!user) res.status(404).json({ error: "User not found" });
+
+    res.json({ user });
+  } catch (err) {
+    res.status(401).json({ error: "Invalid token" });
+  }
+});
+
+app.post("/api/logout", (req, res) => {
+  res.clearCookie("token", {
+    httpOnly: true,
+    sameSite: "lax",
+    secure: process.env.NODE_ENV === "production",
+  });
+  res.json({ message: "Logged out" });
+});
+
 // POST - END
 
-// DELETE 
+// DELETE
 // favourite endpoint
 app.delete("/api/recipes/favourite", async (req, res) => {
   const { recipeId, userId } = req.body;
