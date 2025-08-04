@@ -19,6 +19,7 @@ app.use(
   cors({
     origin: [
       "http://localhost:5173",
+      "https://recipe-app-eta-lime.vercel.app",
       "https://recipe-app-production-39fc.up.railway.app",
     ],
     credentials: true, // allow cookies
