@@ -12,7 +12,6 @@ import fetch from "node-fetch";
 
 const app = express();
 const prismaClient = new PrismaClient();
-const PORT = process.env.PORT || 5000;
 
 app.use(cookieParser());
 app.use(express.json());
@@ -283,5 +282,5 @@ app.delete("/api/recipes/favourite", async (req, res) => {
 });
 
 app.listen(5000, () => {
-  console.log(`Server running on port ${PORT}`);
+  console.log("Server is running on localhost:5000");
 });
