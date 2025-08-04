@@ -22,70 +22,109 @@ app.use(
       "https://recipe-app-eta-lime.vercel.app",
       "https://recipe-app-production-39fc.up.railway.app",
     ],
-    credentials: true, // allow cookies
+    credentials: true,
   })
+);
+
+// Error handling middleware
+app.use(
+  (
+    err: any,
+    req: express.Request,
+    res: express.Response,
+    next: express.NextFunction
+  ) => {
+    console.error("Error:", err);
+    res.status(500).json({ error: "Internal server error" });
+  }
 );
 
 // GET - START
 // search endpoint
 app.get("/api/recipes/search", async (req, res) => {
-  // GET http://localhost/api/recipes/search?searchTerm=burger&page=1
-  const searchTerm = req.query.searchTerm as string;
-  const results = await RecipeAPI.searchRecipes(searchTerm);
-
-  res.json(results);
+  try {
+    const searchTerm = req.query.searchTerm as string;
+    const results = await RecipeAPI.searchRecipes(searchTerm);
+    res.json(results);
+  } catch (error) {
+    console.error("Search error:", error);
+    res.status(500).json({ error: "Failed to search recipes" });
+  }
 });
+
 // information endpoint
 app.get("/api/recipes/:recipeId/information", async (req, res) => {
-  const recipeId = req.params.recipeId;
-  const results = await RecipeAPI.getRecipeInformation(recipeId);
-
-  res.json(results);
+  try {
+    const recipeId = req.params.recipeId;
+    const results = await RecipeAPI.getRecipeInformation(recipeId);
+    res.json(results);
+  } catch (error) {
+    console.error("Recipe info error:", error);
+    res.status(500).json({ error: "Failed to get recipe information" });
+  }
 });
+
 // favourite endpoint
 app.get("/api/recipes/favourite", async (req, res) => {
-  const userId = req.query.userId as string;
-  if (!userId) {
-    res.status(400).json({ error: "User ID is required" });
-  }
-
-  // Fetch favourite recipes for the logged-in user
   try {
+    const userId = req.query.userId as string;
+    if (!userId) {
+      return res.status(400).json({ error: "User ID is required" });
+    }
+
     const recipes = await prismaClient.favouriteRecipes.findMany({
       where: { userId: parseInt(userId) },
     });
     const recipeIds = recipes.map((recipe) => recipe.recipeId.toString());
 
     const favourites = await RecipeAPI.getFavouriteRecipesByIds(recipeIds);
-
     res.json(favourites);
   } catch (error) {
-    console.log(error);
+    console.error("Favourite recipes error:", error);
     res.status(500).json({ error: "Oops, something went wrong" });
   }
 });
+
 // categories endpoint
 app.get("/api/recipes/categories", async (req, res) => {
-  const categories = await RecipeAPI.getRecipeCategories();
-  res.json(categories);
+  try {
+    const categories = await RecipeAPI.getRecipeCategories();
+    res.json(categories);
+  } catch (error) {
+    console.error("Categories error:", error);
+    res.status(500).json({ error: "Failed to get categories" });
+  }
 });
+
 // areas endpoint
 app.get("/api/recipes/areas", async (req, res) => {
-  const areas = await RecipeAPI.getRecipeAreas();
-  res.json(areas);
+  try {
+    const areas = await RecipeAPI.getRecipeAreas();
+    res.json(areas);
+  } catch (error) {
+    console.error("Areas error:", error);
+    res.status(500).json({ error: "Failed to get areas" });
+  }
 });
+
 // ingredients endpoint
 app.get("/api/recipes/ingredients", async (req, res) => {
-  const ingredients = await RecipeAPI.getRecipeIngredients();
-  res.json(ingredients);
+  try {
+    const ingredients = await RecipeAPI.getRecipeIngredients();
+    res.json(ingredients);
+  } catch (error) {
+    console.error("Ingredients error:", error);
+    res.status(500).json({ error: "Failed to get ingredients" });
+  }
 });
+
 // Advanced Search Endpoint
 app.get("/api/recipes/advanced-search", async (req, res) => {
-  const category = req.query.category as string;
-  const area = req.query.area as string;
-  const ingredient = req.query.ingredient as string;
-
   try {
+    const category = req.query.category as string;
+    const area = req.query.area as string;
+    const ingredient = req.query.ingredient as string;
+
     const results = await RecipeAPI.searchRecipesByFilters({
       category,
       area,
@@ -98,168 +137,188 @@ app.get("/api/recipes/advanced-search", async (req, res) => {
     res.status(500).json({ error: "Something went wrong" });
   }
 });
+
 // Random Recipe Endpoint
 app.get("/api/recipes/random", async (req, res) => {
   try {
     const { results } = await RecipeAPI.getRandomRecipes(10);
     res.json({ results });
   } catch (error) {
-    console.error(error);
+    console.error("Random recipes error:", error);
     res.status(500).json({ error: "Failed to fetch random meals" });
   }
 });
-// GET - END
 
 // POST - START
 app.post("/api/recipes/favourite", async (req, res) => {
-  const { recipeId, userId } = req.body;
-
-  if (!recipeId || !userId) {
-    res.status(400).json({ error: "Missing recipeId or userId" });
-    return;
-  }
-
-  // save favourite recipe to loged-in user
   try {
+    const { recipeId, userId } = req.body;
+
+    if (!recipeId || !userId) {
+      return res.status(400).json({ error: "Missing recipeId or userId" });
+    }
+
     const favouriteRecipe = await prismaClient.favouriteRecipes.create({
       data: {
-        recipeId: recipeId.toString(), // Ensure recipeId is string
-        userId: Number(userId), // Ensure userId is number
+        recipeId: recipeId.toString(),
+        userId: Number(userId),
       },
     });
 
     res.status(201).json(favouriteRecipe);
   } catch (error: any) {
-    console.log(error);
-    // handle duplicate
+    console.error("Add favourite error:", error);
     if (error.code === "P2002") {
-      res.status(409).json({ error: "Recipe already added to favourites." });
-      return;
+      return res
+        .status(409)
+        .json({ error: "Recipe already added to favourites." });
     }
-
     res.status(500).json({ error: "Oops, something went wrong" });
   }
 });
 
 app.post("/api/login", async (req, res) => {
-  const { username, password } = req.body;
+  try {
+    const { username, password } = req.body;
 
-  if (!username || !password) {
-    res.status(400).json({ error: "Username and password are required." });
-    return;
-  }
-
-  // find user by username from the database
-  const user = await prismaClient.user.findUnique({
-    where: { username },
-  });
-  // Check if user exists
-  if (!user) {
-    res.status(404).json({ error: "User not found." });
-    return;
-  }
-  // authenticate password
-  const isPasswordValid = await bcrypt.compare(password, user.password);
-  // Check if password is valid
-  if (!isPasswordValid) {
-    res.status(401).json({ error: "Invalid username or password. " });
-    return;
-  }
-
-  // Sign JWT
-  const token = jwt.sign(
-    { id: user.id, username: user.username },
-    process.env.JWT_SECRET!,
-    {
-      expiresIn: "7d",
+    if (!username || !password) {
+      return res
+        .status(400)
+        .json({ error: "Username and password are required." });
     }
-  );
-  // Set cookie
-  res.cookie("token", token, {
-    httpOnly: true,
-    secure: process.env.NODE_ENV === "production",
-    sameSite: "lax",
-    maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
-  });
 
-  res.json({ message: "Login successful" });
+    // Check if JWT_SECRET is defined
+    if (!process.env.JWT_SECRET) {
+      console.error("JWT_SECRET is not defined");
+      return res.status(500).json({ error: "Server configuration error" });
+    }
+
+    const user = await prismaClient.user.findUnique({
+      where: { username },
+    });
+
+    if (!user) {
+      return res.status(404).json({ error: "User not found." });
+    }
+
+    const isPasswordValid = await bcrypt.compare(password, user.password);
+    if (!isPasswordValid) {
+      return res.status(401).json({ error: "Invalid username or password." });
+    }
+
+    const token = jwt.sign(
+      { id: user.id, username: user.username },
+      process.env.JWT_SECRET,
+      { expiresIn: "7d" }
+    );
+
+    // Set cookie with more explicit options
+    res.cookie("token", token, {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === "production",
+      sameSite: process.env.NODE_ENV === "production" ? "none" : "lax",
+      maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
+      domain: process.env.NODE_ENV === "production" ? undefined : "localhost",
+    });
+
+    res.json({
+      message: "Login successful",
+      user: { id: user.id, username: user.username },
+    });
+  } catch (error) {
+    console.error("Login error:", error);
+    res.status(500).json({ error: "Login failed. Please try again." });
+  }
 });
 
 app.post("/api/signup", async (req, res) => {
-  const { username, password } = req.body;
+  try {
+    const { username, password } = req.body;
 
-  if (!username || !password) {
-    res.status(400).json({ error: "Username and password are required." });
-    return;
-  }
+    if (!username || !password) {
+      return res
+        .status(400)
+        .json({ error: "Username and password are required." });
+    }
 
-  // Find username in the database
-  const existingUser = await prismaClient.user.findUnique({
-    where: { username },
-  });
-  // Check if user already exists
-  if (existingUser) {
-    res.status(400).json({ error: "Username already taken." });
-    return;
+    const existingUser = await prismaClient.user.findUnique({
+      where: { username },
+    });
+
+    if (existingUser) {
+      return res.status(400).json({ error: "Username already taken." });
+    }
+
+    const hashedPassword = await bcrypt.hash(password, 10);
+    const newUser = await prismaClient.user.create({
+      data: {
+        username,
+        password: hashedPassword,
+      },
+    });
+
+    res.status(201).json({ message: "User created!", userId: newUser.id });
+  } catch (error) {
+    console.error("Signup error:", error);
+    res.status(500).json({ error: "Failed to create user. Please try again." });
   }
-  // Hash the password
-  const hashedPassword = await bcrypt.hash(password, 10);
-  // Create new user
-  const newUser = await prismaClient.user.create({
-    data: {
-      username,
-      password: hashedPassword,
-    },
-  });
-  // Respond with success
-  res.status(201).json({ message: "User created!", userId: newUser.id });
 });
 
 app.get("/api/me", async (req, res) => {
-  const token = req.cookies.token;
-
-  if (!token) res.status(401).json({ error: "Not authenticated" });
-
   try {
-    const payload = jwt.verify(token, process.env.JWT_SECRET!) as {
-      id: number;
-    };
+    const token = req.cookies.token;
+
+    if (!token) {
+      return res.status(401).json({ error: "Not authenticated" });
+    }
+
+    if (!process.env.JWT_SECRET) {
+      console.error("JWT_SECRET is not defined");
+      return res.status(500).json({ error: "Server configuration error" });
+    }
+
+    const payload = jwt.verify(token, process.env.JWT_SECRET) as { id: number };
 
     const user = await prismaClient.user.findUnique({
       where: { id: payload.id },
       select: { id: true, username: true },
     });
 
-    if (!user) res.status(404).json({ error: "User not found" });
+    if (!user) {
+      return res.status(404).json({ error: "User not found" });
+    }
 
     res.json({ user });
   } catch (err) {
+    console.error("Token verification error:", err);
     res.status(401).json({ error: "Invalid token" });
   }
 });
 
 app.post("/api/logout", (req, res) => {
-  res.clearCookie("token", {
-    httpOnly: true,
-    sameSite: "lax",
-    secure: process.env.NODE_ENV === "production",
-  });
-  res.json({ message: "Logged out" });
+  try {
+    res.clearCookie("token", {
+      httpOnly: true,
+      sameSite: process.env.NODE_ENV === "production" ? "none" : "lax",
+      secure: process.env.NODE_ENV === "production",
+      domain: process.env.NODE_ENV === "production" ? undefined : "localhost",
+    });
+    res.json({ message: "Logged out" });
+  } catch (error) {
+    console.error("Logout error:", error);
+    res.status(500).json({ error: "Logout failed" });
+  }
 });
 
-// POST - END
-
 // DELETE
-// favourite endpoint
 app.delete("/api/recipes/favourite", async (req, res) => {
-  const { recipeId, userId } = req.body;
-
-  if (!recipeId || !userId) {
-    res.status(400).json({ error: "Missing recipeId or userId" });
-  }
-
   try {
-    // Check if recipe exists first with both recipeId and userId
+    const { recipeId, userId } = req.body;
+
+    if (!recipeId || !userId) {
+      return res.status(400).json({ error: "Missing recipeId or userId" });
+    }
+
     const recipe = await prismaClient.favouriteRecipes.findFirst({
       where: {
         recipeId: recipeId,
@@ -268,23 +327,26 @@ app.delete("/api/recipes/favourite", async (req, res) => {
     });
 
     if (!recipe) {
-      res.status(404).json({ error: "Recipe not found in favorites" });
-      return;
+      return res.status(404).json({ error: "Recipe not found in favorites" });
     }
 
     await prismaClient.favouriteRecipes.delete({
-      where: {
-        id: recipe.id,
-      },
+      where: { id: recipe.id },
     });
 
     res.status(204).send();
   } catch (error) {
-    console.log(error);
+    console.error("Delete favourite error:", error);
     res.status(500).json({ error: "Oops, something went wrong" });
   }
 });
 
-app.listen(5000, () => {
-  console.log("Server is running on localhost:5000");
+// Handle 404 for API routes
+app.use("/api/*", (req, res) => {
+  res.status(404).json({ error: "API endpoint not found" });
+});
+
+const PORT = process.env.PORT || 5000;
+app.listen(PORT, () => {
+  console.log(`Server is running on port ${PORT}`);
 });
