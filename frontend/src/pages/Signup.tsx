@@ -13,7 +13,10 @@ const Signup = ({ onSignupSuccess, onCancel }: Props) => {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
-      const { userId, username: returnUsername } = await signup(username, password);
+      const { userId, username: returnUsername } = await signup(
+        username,
+        password
+      );
       onSignupSuccess(userId, returnUsername); // Notify parent component of successful login
     } catch (err) {
       console.error("Signup failed", err);
@@ -22,9 +25,16 @@ const Signup = ({ onSignupSuccess, onCancel }: Props) => {
 
   return (
     <div
-      className="flex min-h-screen items-center justify-center bg-cover bg-center"
+      className="flex flex-col items-center justify-center min-h-screen bg-cover bg-center px-4"
       style={{ backgroundImage: 'url("/hero-image.jpg")' }}
     >
+      <h1
+        className="text-4xl md:text-5xl font-extrabold text-[#FF8C42] mb-8 text-center"
+        style={{ textShadow: "0 2px 4px rgba(0,0,0,0.5)" }}
+      >
+        🍽️ Welcome to <span className="text-yellow-300">EasyMealRecipes</span>
+      </h1>
+
       <form
         onSubmit={handleSubmit}
         className="bg-white bg-opacity-90 p-8 rounded-lg shadow-md w-full max-w-sm"
@@ -61,11 +71,12 @@ const Signup = ({ onSignupSuccess, onCancel }: Props) => {
         </button>
       </form>
 
-      <div className="absolute bottom-8 text-black text-sm">
+      <div className="absolute bottom-8 text-black text-lg font-bold">
         <button
           type="button"
           onClick={onCancel}
-          className="underline text-blue-800 hover:text-black font-bold"
+          className="underline text-yellow-300 hover:text-white font-bold"
+          style={{ textShadow: "0 1px 2px rgba(0, 0, 0, 0.6)" }}
         >
           Back to Login
         </button>

@@ -33,7 +33,10 @@ const Login = ({ onLoginSuccess, onCreateAccountClick }: Props) => {
       className="flex flex-col items-center justify-center min-h-screen bg-cover bg-center px-4"
       style={{ backgroundImage: 'url("/hero-image.jpg")' }}
     >
-      <h1 className="text-4xl md:text-5xl font-extrabold text-white drop-shadow-lg mb-8 text-center">
+      <h1
+        className="text-4xl md:text-5xl font-extrabold text-[#FF8C42] mb-8 text-center"
+        style={{ textShadow: "0 2px 4px rgba(0,0,0,0.5)" }}
+      >
         🍽️ Welcome to <span className="text-yellow-300">EasyMealRecipes</span>
       </h1>
 
@@ -88,12 +91,16 @@ const Login = ({ onLoginSuccess, onCreateAccountClick }: Props) => {
         </button>
       </form>
 
-      <div className="absolute bottom-8 text-white text-sm text-center">
+      <div
+        className="absolute bottom-8 text-[#FF8C42] text-lg text-center font-bold"
+        style={{ textShadow: "0 1px 2px rgba(0, 0, 0, 0.6)" }}
+      >
         <p>
           Don’t have an account?{" "}
           <button
             onClick={onCreateAccountClick}
             className="underline text-yellow-300 hover:text-white font-bold"
+            style={{ textShadow: "0 1px 2px rgba(0, 0, 0, 0.6)" }}
           >
             Create account
           </button>
