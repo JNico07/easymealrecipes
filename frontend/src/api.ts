@@ -1,10 +1,11 @@
 import type { Recipe, User } from "./types";
 
+// Base URL for the Backend API
+const baseURL = import.meta.env.VITE_APP_URL || "http://localhost:5000";
+
 // Search API call
 export const searchRecipes = async (searchTerm: string, page: number) => {
-  const baseUrl = new URL(
-    "https://recipe-app-production-39fc.up.railway.app/api/recipes/search"
-  );
+  const baseUrl = new URL(`${baseURL}/api/recipes/search`);
   baseUrl.searchParams.append("searchTerm", searchTerm);
   baseUrl.searchParams.append("page", String(page));
 
@@ -23,9 +24,7 @@ export const searchRecipes = async (searchTerm: string, page: number) => {
 
 // get Information API call
 export const getRecipeInformation = async (recipeId: string) => {
-  const url = new URL(
-    `https://recipe-app-production-39fc.up.railway.app/api/recipes/${recipeId}/information`
-  );
+  const url = new URL(`${baseURL}/api/recipes/${recipeId}/information`);
   const response = await fetch(url);
 
   if (!response.ok) {
@@ -42,9 +41,7 @@ export const getRecipeInformation = async (recipeId: string) => {
 
 // get Favourite API call
 export const getFavouriteRecipes = async (userId: number) => {
-  const url = new URL(
-    "https://recipe-app-production-39fc.up.railway.app/api/recipes/favourite"
-  );
+  const url = new URL(`${baseURL}/api/recipes/favourite`);
   url.searchParams.append("userId", userId.toString());
 
   const response = await fetch(url);
@@ -62,9 +59,7 @@ export const getFavouriteRecipes = async (userId: number) => {
 
 // get Categories API call
 export const getRecipeCategories = async () => {
-  const url = new URL(
-    "https://recipe-app-production-39fc.up.railway.app/api/recipes/categories"
-  );
+  const url = new URL(`${baseURL}/api/recipes/categories`);
   const response = await fetch(url);
 
   if (!response.ok) {
@@ -80,9 +75,7 @@ export const getRecipeCategories = async () => {
 };
 // get Areas API call
 export const getRecipeAreas = async () => {
-  const url = new URL(
-    "https://recipe-app-production-39fc.up.railway.app/api/recipes/areas"
-  );
+  const url = new URL(`${baseURL}/api/recipes/areas`);
   const response = await fetch(url);
 
   if (!response.ok) {
@@ -98,9 +91,7 @@ export const getRecipeAreas = async () => {
 };
 // get Ingredients API call
 export const getRecipeIngredients = async () => {
-  const url = new URL(
-    "https://recipe-app-production-39fc.up.railway.app/api/recipes/ingredients"
-  );
+  const url = new URL(`${baseURL}/api/recipes/ingredients`);
   const response = await fetch(url);
 
   if (!response.ok) {
@@ -116,9 +107,7 @@ export const getRecipeIngredients = async () => {
 };
 // get Random
 export const getRandomRecipes = async () => {
-  const url = new URL(
-    "https://recipe-app-production-39fc.up.railway.app/api/recipes/random"
-  );
+  const url = new URL(`${baseURL}/api/recipes/random`);
   const response = await fetch(url);
   if (!response.ok) {
     const text = await response.text();
@@ -133,13 +122,10 @@ export const getRandomRecipes = async () => {
 };
 //
 export const getCurrentUser = async (): Promise<{ user: User }> => {
-  const res = await fetch(
-    "https://recipe-app-production-39fc.up.railway.app/api/me",
-    {
-      method: "GET",
-      credentials: "include", // Send cookie
-    }
-  );
+  const res = await fetch(`${baseURL}/api/me`, {
+    method: "GET",
+    credentials: "include", // Send cookie
+  });
 
   if (!res.ok) {
     const text = await res.text();
@@ -156,9 +142,7 @@ export const getCurrentUser = async (): Promise<{ user: User }> => {
 
 // add Favourite API call
 export const addFavouriteRecipe = async (recipe: Recipe, userId: number) => {
-  const url = new URL(
-    "https://recipe-app-production-39fc.up.railway.app/api/recipes/favourite"
-  );
+  const url = new URL(`${baseURL}/api/recipes/favourite`);
   const body = {
     recipeId: recipe.id.toString(), // Convert to string to match schema
     userId: userId,
@@ -185,9 +169,7 @@ export const addFavouriteRecipe = async (recipe: Recipe, userId: number) => {
 
 // remove Favourite API call
 export const removeFavouriteRecipe = async (recipe: Recipe, userId: number) => {
-  const url = new URL(
-    "https://recipe-app-production-39fc.up.railway.app/api/recipes/favourite"
-  );
+  const url = new URL(`${baseURL}/api/recipes/favourite`);
   const body = {
     recipeId: recipe.id.toString(),
     userId: userId,
@@ -223,9 +205,7 @@ export const searchRecipesWithFilters = async ({
   ingredient?: string;
   page: number;
 }) => {
-  const url = new URL(
-    "https://recipe-app-production-39fc.up.railway.app/api/recipes/advanced-search"
-  );
+  const url = new URL(`${baseURL}/api/recipes/advanced-search`);
   url.searchParams.append("page", String(page));
   if (category) url.searchParams.append("category", category);
   if (area) url.searchParams.append("area", area);
@@ -245,15 +225,12 @@ export const searchRecipesWithFilters = async ({
 };
 
 export const login = async (username: string, password: string) => {
-  const res = await fetch(
-    "https://recipe-app-production-39fc.up.railway.app/api/login",
-    {
-      method: "POST",
-      credentials: "include",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ username, password }),
-    }
-  );
+  const res = await fetch(`${baseURL}/api/login`, {
+    method: "POST",
+    credentials: "include",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ username, password }),
+  });
 
   if (!res.ok) {
     const text = await res.text();
@@ -268,15 +245,12 @@ export const login = async (username: string, password: string) => {
 };
 
 export const signup = async (username: string, password: string) => {
-  const res = await fetch(
-    "https://recipe-app-production-39fc.up.railway.app/api/signup",
-    {
-      method: "POST",
-      credentials: "include",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ username, password }),
-    }
-  );
+  const res = await fetch(`${baseURL}/api/signup`, {
+    method: "POST",
+    credentials: "include",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ username, password }),
+  });
 
   if (!res.ok) {
     const text = await res.text();
@@ -292,13 +266,10 @@ export const signup = async (username: string, password: string) => {
 };
 
 export const logout = async () => {
-  const res = await fetch(
-    "https://recipe-app-production-39fc.up.railway.app/api/logout",
-    {
-      method: "POST",
-      credentials: "include",
-    }
-  );
+  const res = await fetch(`${baseURL}/api/logout`, {
+    method: "POST",
+    credentials: "include",
+  });
 
   if (!res.ok) {
     const text = await res.text();

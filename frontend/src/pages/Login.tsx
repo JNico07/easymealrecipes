@@ -30,17 +30,25 @@ const Login = ({ onLoginSuccess, onCreateAccountClick }: Props) => {
 
   return (
     <div
-      className="flex min-h-screen items-center justify-center bg-cover bg-center"
+      className="flex flex-col items-center justify-center min-h-screen bg-cover bg-center px-4"
       style={{ backgroundImage: 'url("/hero-image.jpg")' }}
     >
+      <h1 className="text-4xl md:text-5xl font-extrabold text-white drop-shadow-lg mb-8 text-center">
+        🍽️ Welcome to <span className="text-yellow-300">EasyMealRecipes</span>
+      </h1>
+
       <form
         onSubmit={handleSubmit}
         className="bg-white bg-opacity-90 p-8 rounded-lg shadow-md w-full max-w-sm"
       >
-        <h2 className="text-2xl font-bold mb-6 text-center">Login</h2>
+        <h2 className="text-2xl font-bold mb-6 text-center text-gray-800">
+          Login to your account
+        </h2>
 
         <div className="mb-4">
-          <label className="block text-sm font-medium mb-1">Username</label>
+          <label className="block text-sm font-medium mb-1 text-gray-700">
+            Username
+          </label>
           <input
             type="text"
             value={username}
@@ -51,7 +59,9 @@ const Login = ({ onLoginSuccess, onCreateAccountClick }: Props) => {
         </div>
 
         <div className="mb-6">
-          <label className="block text-sm font-medium mb-1">Password</label>
+          <label className="block text-sm font-medium mb-1 text-gray-700">
+            Password
+          </label>
           <input
             type="password"
             value={password}
@@ -78,12 +88,12 @@ const Login = ({ onLoginSuccess, onCreateAccountClick }: Props) => {
         </button>
       </form>
 
-      <div className="absolute bottom-8 text-black text-sm">
+      <div className="absolute bottom-8 text-white text-sm text-center">
         <p>
-          Don't have an account?{" "}
+          Don’t have an account?{" "}
           <button
             onClick={onCreateAccountClick}
-            className="underline text-blue-900 hover:text-black font-bold"
+            className="underline text-yellow-300 hover:text-white font-bold"
           >
             Create account
           </button>

@@ -161,9 +161,21 @@ const Home = ({ userId, username }: HomeProps) => {
   return (
     <>
       <nav className="flex items-center justify-between bg-white shadow px-6 py-4 sticky top-0 z-40">
-        <div className="text-xl font-bold text-gray-800">
-          {username ? username.charAt(0).toUpperCase() + username.slice(1) : ""}
-          's Recipe App
+        <div className="text-2xl md:text-3xl font-extrabold text-orange-600 flex items-center gap-2">
+          🍽️{" "}
+          <span>
+            Welcome to{" "}
+            <span
+              className="text-[#FF8C42] cursor-pointer hover:underline"
+              onClick={() => setSelectedTab("explore")}
+            >
+              EasyMealRecipes
+            </span>
+            ,{" "}
+            {username
+              ? username.charAt(0).toUpperCase() + username.slice(1)
+              : ""}
+          </span>
         </div>
 
         <div className="flex gap-4">
