@@ -1,16 +1,23 @@
-import { Routes, Route, Navigate, useNavigate } from "react-router-dom";
+import {
+  Routes,
+  Route,
+  Navigate,
+  useNavigate,
+  useLocation,
+} from "react-router-dom"; // ✅ Add useLocation
 import { useEffect, useState } from "react";
 import LoginPage from "./pages/Login";
 import SignupPage from "./pages/Signup";
 import Home from "./pages/Home";
 import { getCurrentUser } from "./api";
-import Footer from "./components/Footer"; // 👈 Make sure the path is correct
+import Footer from "./components/Footer";
 
 const App = () => {
   const [userId, setUserId] = useState<number | null>(null);
   const [username, setUserName] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
+  const location = useLocation(); // ✅ Get current route
 
   useEffect(() => {
     const fetchUser = async () => {
@@ -83,7 +90,11 @@ const App = () => {
           />
         </Routes>
       </div>
-      <Footer /> {/* ✅ Footer always shows on all pages */}
+
+      {/* Show Footer only on non-auth pages */}
+      {location.pathname !== "/login" && location.pathname !== "/signup" && (
+        <Footer />
+      )}
     </div>
   );
 };
