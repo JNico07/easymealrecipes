@@ -1,6 +1,7 @@
 # 🍽️ EasyMealRecipes
 
-**EasyMealRecipes** is a full-stack web application for discovering, searching, and saving meal recipes. It features a modern UI and seamless user experience, powered by:
+**EasyMealRecipes** is a full-stack web application for discovering, searching, and saving meal recipes.
+Powered by:
 
 - **Frontend**: React + TypeScript + Tailwind CSS  
 - **Backend**: Node.js + Express + Prisma  
