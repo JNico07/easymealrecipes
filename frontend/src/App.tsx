@@ -4,6 +4,7 @@ import LoginPage from "./pages/Login";
 import SignupPage from "./pages/Signup";
 import Home from "./pages/Home";
 import { getCurrentUser } from "./api";
+import Footer from "./components/Footer"; // 👈 Make sure the path is correct
 
 const App = () => {
   const [userId, setUserId] = useState<number | null>(null);
@@ -43,47 +44,47 @@ const App = () => {
 
   if (loading)
     return (
-      <div className="flex h-screen items-center justify-center bg-white">
-        <div className="flex flex-col items-center">
-          <div className="animate-spin rounded-full h-16 w-16 border-t-4 border-orange-500 border-solid"></div>
-          <p className="mt-4 text-lg font-semibold text-orange-600">
-            Loading EasyMealRecipes...
-          </p>
-        </div>
+      <div className="flex justify-center items-center h-screen">
+        <div className="animate-spin h-8 w-8 border-4 border-orange-400 border-t-transparent rounded-full"></div>
       </div>
     );
 
   return (
-    <Routes>
-      <Route
-        path="/"
-        element={
-          userId ? (
-            <Home userId={userId} username={username} />
-          ) : (
-            <Navigate to="/login" />
-          )
-        }
-      />
-      <Route
-        path="/login"
-        element={
-          <LoginPage
-            onLoginSuccess={handleLoginSuccess}
-            onCreateAccountClick={() => navigate("/signup")}
+    <div className="flex flex-col min-h-screen">
+      <div className="flex-grow">
+        <Routes>
+          <Route
+            path="/"
+            element={
+              userId ? (
+                <Home userId={userId} username={username} />
+              ) : (
+                <Navigate to="/login" />
+              )
+            }
           />
-        }
-      />
-      <Route
-        path="/signup"
-        element={
-          <SignupPage
-            onSignupSuccess={handleSignupSuccess}
-            onCancel={() => navigate("/login")}
+          <Route
+            path="/login"
+            element={
+              <LoginPage
+                onLoginSuccess={handleLoginSuccess}
+                onCreateAccountClick={() => navigate("/signup")}
+              />
+            }
           />
-        }
-      />
-    </Routes>
+          <Route
+            path="/signup"
+            element={
+              <SignupPage
+                onSignupSuccess={handleSignupSuccess}
+                onCancel={() => navigate("/login")}
+              />
+            }
+          />
+        </Routes>
+      </div>
+      <Footer /> {/* ✅ Footer always shows on all pages */}
+    </div>
   );
 };
 
