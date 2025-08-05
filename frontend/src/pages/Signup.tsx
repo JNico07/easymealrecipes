@@ -2,7 +2,7 @@ import { useState } from "react";
 import { signup } from "../api";
 
 interface Props {
-  onSignupSuccess: (userId: number) => void;
+  onSignupSuccess: (userId: number, username: string) => void;
   onCancel: () => void;
 }
 
@@ -13,8 +13,8 @@ const Signup = ({ onSignupSuccess, onCancel }: Props) => {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
-      const { userId } = await signup(username, password);
-      onSignupSuccess(userId); // Notify parent component of successful login
+      const { userId, username: returnUsername } = await signup(username, password);
+      onSignupSuccess(userId, returnUsername); // Notify parent component of successful login
     } catch (err) {
       console.error("Signup failed", err);
     }

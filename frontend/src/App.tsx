@@ -35,8 +35,9 @@ const App = () => {
     navigate("/");
   };
 
-  const handleSignupSuccess = (newUserId: number) => {
+  const handleSignupSuccess = (newUserId: number, newUserName: string) => {
     setUserId(newUserId);
+    setUserName(newUserName);
     navigate("/");
   };
 

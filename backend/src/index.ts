@@ -212,7 +212,13 @@ app.post("/api/signup", async (req, res) => {
     },
   });
   // Respond with success
-  res.status(201).json({ message: "User created!", userId: newUser.id });
+  res
+    .status(201)
+    .json({
+      message: "User created!",
+      userId: newUser.id,
+      username: newUser.username,
+    });
 });
 
 app.get("/api/me", async (req, res) => {
