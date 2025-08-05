@@ -145,9 +145,8 @@ app.post("/api/login", async (req, res) => {
   const { username, password } = req.body;
 
   if (!username || !password) {
-    return res
-      .status(400)
-      .json({ error: "Username and password are required." });
+    res.status(400).json({ error: "Username and password are required." });
+    return;
   }
 
   // find user by username from the database
@@ -156,13 +155,15 @@ app.post("/api/login", async (req, res) => {
   });
   // Check if user exists
   if (!user) {
-    return res.status(404).json({ error: "User not found." });
+    res.status(404).json({ error: "User not found." });
+    return;
   }
   // authenticate password
   const isPasswordValid = await bcrypt.compare(password, user.password);
   // Check if password is valid
   if (!isPasswordValid) {
-    return res.status(401).json({ error: "Invalid username or password." });
+    res.status(401).json({ error: "Invalid username or password. " });
+    return;
   }
 
   // Sign JWT
@@ -217,9 +218,7 @@ app.post("/api/signup", async (req, res) => {
 app.get("/api/me", async (req, res) => {
   const token = req.cookies.token;
 
-  if (!token) {
-    return res.status(401).json({ error: "Not authenticated" });
-  }
+  if (!token) res.status(401).json({ error: "Not authenticated" });
 
   try {
     const payload = jwt.verify(token, process.env.JWT_SECRET!) as {
@@ -231,13 +230,11 @@ app.get("/api/me", async (req, res) => {
       select: { id: true, username: true },
     });
 
-    if (!user) {
-      return res.status(404).json({ error: "User not found" });
-    }
+    if (!user) res.status(404).json({ error: "User not found" });
 
     res.json({ user });
   } catch (err) {
-    return res.status(401).json({ error: "Invalid token" });
+    res.status(401).json({ error: "Invalid token" });
   }
 });
 
