@@ -180,6 +180,7 @@ app.post("/api/login", async (req, res) => {
     secure: true, // Always true for cross-site cookies
     sameSite: "none", // Required for cross-site cookies
     maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
+    domain: ".vercel.app",
   });
 
   res.json({ message: "Login successful" });
@@ -212,13 +213,11 @@ app.post("/api/signup", async (req, res) => {
     },
   });
   // Respond with success
-  res
-    .status(201)
-    .json({
-      message: "User created!",
-      userId: newUser.id,
-      username: newUser.username,
-    });
+  res.status(201).json({
+    message: "User created!",
+    userId: newUser.id,
+    username: newUser.username,
+  });
 });
 
 app.get("/api/me", async (req, res) => {
@@ -247,8 +246,9 @@ app.get("/api/me", async (req, res) => {
 app.post("/api/logout", (req, res) => {
   res.clearCookie("token", {
     httpOnly: true,
-    sameSite: "lax",
-    secure: process.env.NODE_ENV === "production",
+    sameSite: "none", // Must be 'none' for cross-site cookies
+    secure: true, // Must be 'true' for 'sameSite: "none"'
+    domain: ".vercel.app", // Specify the domain the cookie was set on
   });
   res.json({ message: "Logged out" });
 });
