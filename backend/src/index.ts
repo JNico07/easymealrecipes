@@ -22,6 +22,10 @@ app.use(
   })
 );
 
+app.get("/", (req, res) => {
+  res.send("Backend is running 🚀");
+});
+
 // GET - START
 // search endpoint
 app.get("/api/recipes/search", async (req, res) => {
@@ -281,6 +285,8 @@ app.delete("/api/recipes/favourite", async (req, res) => {
   }
 });
 
-app.listen(5000, () => {
-  console.log("Server is running on localhost:5000");
+const PORT = process.env.PORT || 5000;
+
+app.listen(PORT, () => {
+  console.log(`Server is running on http://localhost:${PORT}`);
 });
