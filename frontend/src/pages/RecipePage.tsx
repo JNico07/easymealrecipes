@@ -345,7 +345,7 @@ const RecipePage: FC<RecipePageProps> = ({ userId, username, layoutStyle = "side
                 <SearchComponent
                   onSearch={
                     layoutStyle === "tabs" 
-                      ? (_: string) => {
+                      ? (searchTerm: string) => {
                           const event = { preventDefault: () => {} } as FormEvent;
                           handleSearchSubmit(event);
                         }

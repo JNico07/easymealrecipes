@@ -77,7 +77,7 @@ const RecipeCard: FC<RecipeCardProps> = ({
 
           {/* Tags */}
           <div className="flex flex-wrap gap-2">
-            {recipe.strTags &&
+            {recipe.strTags && recipe.strTags.trim() !== "" &&
               recipe.strTags.split(",").map((tag, index) => {
                 const colors = [
                   "bg-blue-100 text-blue-600",
