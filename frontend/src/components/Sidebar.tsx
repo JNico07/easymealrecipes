@@ -1,16 +1,16 @@
 import type { FC } from "react";
-import { Home, Search, Heart, LogOut } from "lucide-react";
+import { Home, Compass, Heart, LogOut } from "lucide-react";
 
 interface SidebarProps {
   activeItem: string;
   onNavigate: (item: string) => void;
-  onLogout: ()=>void;
+  onLogout: () => void;
 }
 
 const Sidebar: FC<SidebarProps> = ({ activeItem, onNavigate, onLogout }) => {
   const menuItems = [
     { id: "home", label: "Home", icon: <Home size={24} /> },
-    { id: "explore", label: "Explore", icon: <Search size={24} /> },
+    { id: "explore", label: "Explore", icon: <Compass size={24} /> },
     { id: "favorites", label: "Favorites", icon: <Heart size={24} /> },
   ];
 
@@ -22,7 +22,11 @@ const Sidebar: FC<SidebarProps> = ({ activeItem, onNavigate, onLogout }) => {
       {/* Logo */}
       <div>
         <div className="p-6 flex items-center justify-center">
-          <img src="/logo.png" alt="Recipe App Logo" className="h-12" />
+          <img
+            src="/logo.png"
+            alt="Recipe App Logo"
+            className="h-25 w-auto rounded-full object-cover"
+          />
         </div>
 
         {/* Main menu */}

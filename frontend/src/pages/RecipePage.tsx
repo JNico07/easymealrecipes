@@ -31,6 +31,7 @@ const RecipePage: FC<RecipePageProps> = ({
   const navigate = useNavigate();
   const [activeTab, setActiveTab] = useState<Tab>("home");
   const pageNumber = useRef(1);
+  const exploreRef = useRef<HTMLDivElement | null>(null);
 
   const [searchTerm, setSearchTerm] = useState("");
   const [recommendedRecipes, setRecommendedRecipes] = useState<Recipe[]>([]);
@@ -39,6 +40,7 @@ const RecipePage: FC<RecipePageProps> = ({
   const [favoriteRecipeIds, setFavoriteRecipeIds] = useState<number[]>([]);
 
   const [showOnlyFavorites, setShowOnlyFavorites] = useState(false);
+  const [searchResults, setSearchResults] = useState<Recipe[]>([]);
 
   const [selectedFilters, setSelectedFilters] = useState<{
     category?: string;
@@ -91,9 +93,13 @@ const RecipePage: FC<RecipePageProps> = ({
   const performSearch = async (term: string) => {
     try {
       setSearchTerm(term);
+      if (!term.trim()) {
+        setSearchResults([]); // reset if empty search
+        return;
+      }
+
       const recipes = await searchRecipes(term, 1);
-      setRecommendedRecipes(recipes.results.slice(0, 6));
-      setExploreRecipes(recipes.results.slice(6, 14));
+      setSearchResults(recipes.results || []); // keep results separate
       pageNumber.current = 1;
     } catch (e) {
       console.error(e);
@@ -107,14 +113,9 @@ const RecipePage: FC<RecipePageProps> = ({
     ingredient?: string;
   }) => {
     try {
-      const response = await searchRecipesWithFilters({
-        ...filters,
-        page: 1,
-      });
-
+      const response = await searchRecipesWithFilters({ ...filters, page: 1 });
       setSelectedFilters(filters);
-      setRecommendedRecipes(response.results.slice(0, 6));
-      setExploreRecipes(response.results.slice(6, 14));
+      setSearchResults(response.results || []);
       pageNumber.current = 1;
     } catch (error) {
       console.error("Error applying advanced filters:", error);
@@ -165,6 +166,15 @@ const RecipePage: FC<RecipePageProps> = ({
   const handleNavigate = (item: string) => {
     setActiveTab(item as Tab);
     setShowOnlyFavorites(item === "favorites");
+
+    if (item === "explore" && exploreRef.current) {
+      setTimeout(() => {
+        exploreRef.current?.scrollIntoView({
+          behavior: "smooth",
+          block: "start",
+        });
+      }, 200); // small delay ensures section is rendered
+    }
   };
 
   // Logout
@@ -354,7 +364,19 @@ const RecipePage: FC<RecipePageProps> = ({
                   </button>
                 </div>
               )
+            ) : searchResults.length > 0 ? (
+              // ✅ Show only search results (hides recommended + explore)
+              <RecipeSection
+                title={`Search Results for "${searchTerm}"`}
+                recipes={searchResults}
+                cardsPerRow={layoutStyle === "tabs" ? 4 : 3}
+                favoriteRecipes={favoriteRecipeIds}
+                onFavoriteClick={handleFavoriteToggle}
+                showModal={true}
+                cardVariant="modern"
+              />
             ) : (
+              // ✅ Default view (when no search results)
               <>
                 {recommendedRecipes.length > 0 && (
                   <RecipeSection
@@ -369,7 +391,7 @@ const RecipePage: FC<RecipePageProps> = ({
                 )}
 
                 {exploreRecipes.length > 0 && (
-                  <>
+                  <div ref={exploreRef}>
                     <RecipeSection
                       title="Explore Recipes"
                       recipes={exploreRecipes}
@@ -379,14 +401,13 @@ const RecipePage: FC<RecipePageProps> = ({
                       showModal={true}
                       cardVariant="classic"
                     />
-
                     <button
                       className="text-xl p-4 font-bold mx-auto block mt-8"
                       onClick={handleViewMoreClick}
                     >
                       View More
                     </button>
-                  </>
+                  </div>
                 )}
               </>
             )}
