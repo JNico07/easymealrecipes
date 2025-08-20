@@ -4,19 +4,26 @@ export interface User {
 }
 
 export interface Recipe {
-    id: number;
-    title: string;
-    image: string;
-    imageType: string;
+  id: number;
+  title: string;
+  image: string;
+  imageType: string;
+  strTags: string;
 }
 
 export interface RecipeInformation {
   id: number;
   title: string;
-  summary: string;
+  instruction: string;
   sourceName: string;
   youtubeTutorial: string;
   sourceUrl: string;
+  image: string;
+  imageType: string;
+  ingredients: {
+    ingredient: string;
+    measure: string;
+  }[];
 }
 
 export interface RecipeCategory {

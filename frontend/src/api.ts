@@ -1,7 +1,7 @@
 import type { Recipe, User } from "./types";
 
 // Base URL for the Backend API
-const baseURL = import.meta.env.VITE_APP_URL || "http://localhost:5000";
+const baseURL = import.meta.env.VITE_APP_URL || "http://localhost:3000";
 
 // Search API call
 export const searchRecipes = async (searchTerm: string, page: number) => {

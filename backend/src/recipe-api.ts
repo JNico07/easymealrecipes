@@ -18,6 +18,7 @@ export const searchRecipes = async (searchTerm: string) => {
       title: meals.strMeal,
       image: meals.strMealThumb,
       imageType: "jpg",
+      strTags: meals.strTags,
     }));
 
     return { results };
@@ -39,17 +40,32 @@ export const getRecipeInformation = async (recipeId: string) => {
 
     if (!meal) return null;
 
+    // Extract ingredients + measures
+    const ingredients = [];
+    for (let i = 1; i <= 20; i++) {
+      const ingredient = meal[`strIngredient${i}`];
+      const measure = meal[`strMeasure${i}`];
+      if (ingredient && ingredient.trim() !== "") {
+        ingredients.push({
+          ingredient,
+          measure: measure || "",
+        });
+      }
+    }
+
     // Transform to match frontend's RecipeInformation
     return {
       id: parseInt(meal.idMeal),
       title: meal.strMeal,
-      summary: meal.strInstructions,
+      instruction: meal.strInstructions,
       sourceName: meal.strSource || "TheMealDB",
       image: meal.strMealThumb,
       imageType: "jpg",
       youtubeTutorial: meal.strYoutube || "",
       sourceUrl:
         meal.strSource || "https://www.themealdb.com/meal/" + meal.idMeal,
+      ingredients,
+      strTags: meal.strTags || "",
     };
   } catch (err) {
     console.error(err);
@@ -131,6 +147,7 @@ export const getRecipeIngredients = async () => {
     return null;
   }
 };
+
 // Search recipes by filters (category, area, ingredient)
 export const searchRecipesByFilters = async ({
   category,
@@ -182,6 +199,7 @@ export const getRandomRecipes = async (count = 10) => {
     idMeal: string;
     strMeal: string;
     strMealThumb: string;
+    strTags: string;
   };
 
   type MealDBResponse = {
@@ -203,6 +221,7 @@ export const getRandomRecipes = async (count = 10) => {
         title: meal.strMeal,
         image: meal.strMealThumb,
         imageType: "jpg",
+        strTags: meal.strTags,
       }));
 
     return { results: recipes };
