@@ -8,8 +8,7 @@ import {
 import { useEffect, useState } from "react";
 import LoginPage from "./pages/Login";
 import SignupPage from "./pages/Signup";
-import Home from "./pages/Home";
-import Dashboard from "./pages/Dashboard";
+import RecipePage from "./pages/RecipePage";
 import { getCurrentUser } from "./api";
 import Footer from "./components/Footer";
 
@@ -65,7 +64,7 @@ const App = () => {
             path="/"
             element={
               userId ? (
-                <Dashboard userId={userId} username={username} />
+                <RecipePage userId={userId} username={username} layoutStyle="sidebar" />
               ) : (
                 <Navigate to="/login" />
               )
@@ -75,7 +74,7 @@ const App = () => {
             path="/home"
             element={
               userId ? (
-                <Home userId={userId} username={username} />
+                <RecipePage userId={userId} username={username} layoutStyle="tabs" />
               ) : (
                 <Navigate to="/login" />
               )
