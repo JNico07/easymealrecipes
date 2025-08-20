@@ -47,6 +47,7 @@ app.get("/api/recipes/favourite", async (req, res) => {
   const userId = req.query.userId as string;
   if (!userId) {
     res.status(400).json({ error: "User ID is required" });
+    return;
   }
 
   // Fetch favourite recipes for the logged-in user
@@ -222,8 +223,10 @@ app.post("/api/signup", async (req, res) => {
 app.get("/api/me", async (req, res) => {
   const token = req.cookies.token;
 
-  if (!token) res.status(401).json({ error: "Not authenticated" });
-
+  if (!token) {
+    res.status(401).json({ error: "Not authenticated" });
+    return;
+  }
   try {
     const payload = jwt.verify(token, process.env.JWT_SECRET!) as {
       id: number;
@@ -234,7 +237,10 @@ app.get("/api/me", async (req, res) => {
       select: { id: true, username: true },
     });
 
-    if (!user) res.status(404).json({ error: "User not found" });
+    if (!user) {
+      res.status(404).json({ error: "User not found" });
+      return;
+    }
 
     res.json({ user });
   } catch (err) {
@@ -260,6 +266,7 @@ app.delete("/api/recipes/favourite", async (req, res) => {
 
   if (!recipeId || !userId) {
     res.status(400).json({ error: "Missing recipeId or userId" });
+    return;
   }
 
   try {
