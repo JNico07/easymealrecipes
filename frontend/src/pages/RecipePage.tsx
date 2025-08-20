@@ -12,7 +12,7 @@ import {
   addFavouriteRecipe,
   removeFavouriteRecipe,
   searchRecipesWithFilters,
-  logout
+  logout,
 } from "../api";
 
 interface RecipePageProps {
@@ -24,7 +24,11 @@ interface RecipePageProps {
 
 type Tab = "home" | "explore" | "favorites";
 
-const RecipePage: FC<RecipePageProps> = ({ userId, username, layoutStyle = "sidebar" }) => {
+const RecipePage: FC<RecipePageProps> = ({
+  userId,
+  username,
+  layoutStyle = "sidebar",
+}) => {
   // Navigation and UI state
   const navigate = useNavigate();
   const [activeTab, setActiveTab] = useState<Tab>("home");
@@ -58,11 +62,11 @@ const RecipePage: FC<RecipePageProps> = ({ userId, username, layoutStyle = "side
         if (activeTab === "home" || activeTab === "explore") {
           // Fetch recommended recipes
           const recommendedRes = await getRandomRecipes();
-          setRecommendedRecipes(recommendedRes.results);
+          setRecommendedRecipes(recommendedRes.results || []);
 
           // Fetch explore recipes
           const exploreRes = await getRandomRecipes();
-          setExploreRecipes(exploreRes.results);
+          setExploreRecipes(exploreRes.results || []);
         }
       } catch (error) {
         console.error("Error fetching recipes:", error);
@@ -146,15 +150,15 @@ const RecipePage: FC<RecipePageProps> = ({ userId, username, layoutStyle = "side
 
       if (searchTerm.trim() === "" && !selectedFilters.category) {
         const res = await getRandomRecipes();
-        nextRecipes = res.results;
+        nextRecipes = res.results || [];
       } else {
         const nextPage = pageNumber.current + 1;
         const res = await searchRecipes(searchTerm, nextPage);
-        nextRecipes = res.results;
+        nextRecipes = res.results || [];
         pageNumber.current = nextPage;
       }
 
-      setExploreRecipes([...exploreRecipes, ...nextRecipes]);
+      setExploreRecipes([...(exploreRecipes || []), ...nextRecipes]);
     } catch (e) {
       console.log(e);
     }
@@ -344,9 +348,11 @@ const RecipePage: FC<RecipePageProps> = ({ userId, username, layoutStyle = "side
               <div className="mb-10">
                 <SearchComponent
                   onSearch={
-                    layoutStyle === "tabs" 
-                      ? (searchTerm: string) => {
-                          const event = { preventDefault: () => {} } as FormEvent;
+                    layoutStyle === "tabs"
+                      ? (_searchTerm: string) => {
+                          const event = {
+                            preventDefault: () => {},
+                          } as FormEvent;
                           handleSearchSubmit(event);
                         }
                       : handleSearch
