@@ -108,7 +108,7 @@ const RecipeSection: FC<RecipeSectionProps> = ({
                   <h2 className="text-3xl font-bold">{recipeDetails.title}</h2>
                   <button
                     onClick={() => setIsModalOpen(false)}
-                    className="text-gray-500 hover:text-gray-700 text-3xl font-bold leading-none"
+                    className="text-gray-500 hover:text-red-600 text-3xl font-bold leading-none"
                   >
                     &times;
                   </button>

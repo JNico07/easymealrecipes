@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef } from "react";
-import type { FC, FormEvent } from "react";
+import type { FC } from "react";
 import { useNavigate } from "react-router-dom";
 import Sidebar from "../components/Sidebar";
 import SearchComponent from "../components/SearchComponent";
@@ -18,7 +18,6 @@ import {
 interface RecipePageProps {
   userId: number;
   username: string | null;
-  /** Layout style: 'sidebar' for Dashboard-style with sidebar, 'tabs' for Home-style with tabs */
   layoutStyle?: "sidebar" | "tabs";
 }
 
@@ -29,22 +28,18 @@ const RecipePage: FC<RecipePageProps> = ({
   username,
   layoutStyle = "sidebar",
 }) => {
-  // Navigation and UI state
   const navigate = useNavigate();
   const [activeTab, setActiveTab] = useState<Tab>("home");
   const pageNumber = useRef(1);
 
-  // Recipe data state
   const [searchTerm, setSearchTerm] = useState("");
   const [recommendedRecipes, setRecommendedRecipes] = useState<Recipe[]>([]);
   const [exploreRecipes, setExploreRecipes] = useState<Recipe[]>([]);
   const [favoriteRecipes, setFavoriteRecipes] = useState<Recipe[]>([]);
   const [favoriteRecipeIds, setFavoriteRecipeIds] = useState<number[]>([]);
 
-  // UI state
   const [showOnlyFavorites, setShowOnlyFavorites] = useState(false);
 
-  // Selected filters for advanced search
   const [selectedFilters, setSelectedFilters] = useState<{
     category?: string;
     area?: string;
@@ -55,16 +50,14 @@ const RecipePage: FC<RecipePageProps> = ({
     ingredient: "",
   });
 
-  // Fetch recommended and explore recipes on initial load or tab change
+  // Fetch recommended and explore recipes
   useEffect(() => {
     const fetchRecipes = async () => {
       try {
         if (activeTab === "home" || activeTab === "explore") {
-          // Fetch recommended recipes
           const recommendedRes = await getRandomRecipes();
           setRecommendedRecipes(recommendedRes.results || []);
 
-          // Fetch explore recipes
           const exploreRes = await getRandomRecipes();
           setExploreRecipes(exploreRes.results || []);
         }
@@ -95,34 +88,19 @@ const RecipePage: FC<RecipePageProps> = ({
     fetchFavorites();
   }, [userId, activeTab]);
 
-  // Handle basic search
-  const handleSearch = async (searchTerm: string) => {
-    setSearchTerm(searchTerm);
+  const performSearch = async (term: string) => {
     try {
-      const resultsRes = await searchRecipes(searchTerm, 1);
-      const results = resultsRes.results || [];
-      setRecommendedRecipes(results.slice(0, 6));
-      setExploreRecipes(results.slice(6, 14));
-      pageNumber.current = 1;
-    } catch (error) {
-      console.error("Error searching recipes:", error);
-    }
-  };
-
-  // Handle search form submit (for Home-style layout)
-  const handleSearchSubmit = async (event: FormEvent) => {
-    event.preventDefault();
-    try {
-      const recipes = await searchRecipes(searchTerm, 1);
+      setSearchTerm(term);
+      const recipes = await searchRecipes(term, 1);
       setRecommendedRecipes(recipes.results.slice(0, 6));
       setExploreRecipes(recipes.results.slice(6, 14));
       pageNumber.current = 1;
     } catch (e) {
-      console.log(e);
+      console.error(e);
     }
   };
 
-  // Handle advanced search
+  // Advanced search
   const handleAdvancedSearch = async (filters: {
     category?: string;
     area?: string;
@@ -143,7 +121,7 @@ const RecipePage: FC<RecipePageProps> = ({
     }
   };
 
-  // Handle "View More" functionality
+  // View more
   const handleViewMoreClick = async () => {
     try {
       let nextRecipes;
@@ -164,7 +142,7 @@ const RecipePage: FC<RecipePageProps> = ({
     }
   };
 
-  // Handle favorite toggle
+  // Toggle favorite
   const handleFavoriteToggle = async (recipe: Recipe) => {
     try {
       if (favoriteRecipeIds.includes(recipe.id)) {
@@ -183,34 +161,29 @@ const RecipePage: FC<RecipePageProps> = ({
     }
   };
 
-  // Handle navigation/tab change
+  // Navigate tabs
   const handleNavigate = (item: string) => {
     setActiveTab(item as Tab);
-
-    // Toggle showing only favorites when the favorites menu item is clicked
-    if (item === "favorites") {
-      setShowOnlyFavorites(true);
-    } else {
-      setShowOnlyFavorites(false);
-    }
+    setShowOnlyFavorites(item === "favorites");
   };
 
-  // Handle logout
+  // Logout
   const handleLogout = async () => {
     try {
       await logout();
+      localStorage.removeItem("userId");
+      localStorage.removeItem("username");
       navigate("/login");
     } catch (error) {
       console.error("Logout: ", error);
     }
   };
 
-  // Determine if we should show only favorites based on active tab
   const isShowingOnlyFavorites = showOnlyFavorites || activeTab === "favorites";
 
   return (
     <>
-      {/* Tabs-style navigation (from Home.tsx) */}
+      {/* Tabs nav */}
       {layoutStyle === "tabs" && (
         <nav className="flex items-center justify-between bg-white shadow px-6 py-4 sticky top-0 z-40">
           <div className="text-2xl md:text-3xl font-extrabold text-orange-600 flex items-center gap-2">
@@ -264,15 +237,16 @@ const RecipePage: FC<RecipePageProps> = ({
             : "flex min-h-screen bg-gray-50"
         }
       >
-        {/* Sidebar-style navigation (from Dashboard.tsx and MainPage.tsx) */}
         {layoutStyle === "sidebar" && (
           <>
-            {/* Sidebar - Hidden on mobile, visible on medium screens and up */}
             <div className="hidden md:block">
-              <Sidebar activeItem={activeTab} onNavigate={handleNavigate} />
+              <Sidebar
+                activeItem={activeTab}
+                onNavigate={handleNavigate}
+                onLogout={handleLogout}
+              />
             </div>
 
-            {/* Mobile Header - Visible only on small screens */}
             <div className="fixed top-0 left-0 right-0 bg-white shadow-md z-10 md:hidden">
               <div className="flex items-center justify-between p-4">
                 <div className="text-xl font-bold text-orange-600">
@@ -319,7 +293,6 @@ const RecipePage: FC<RecipePageProps> = ({
           </>
         )}
 
-        {/* Main Content */}
         <main
           className={
             layoutStyle === "sidebar"
@@ -329,7 +302,6 @@ const RecipePage: FC<RecipePageProps> = ({
           role="main"
         >
           <div className="max-w-7xl mx-auto">
-            {/* Welcome Message */}
             <div className="mb-8">
               <h1 className="text-3xl font-bold text-gray-800">
                 {isShowingOnlyFavorites
@@ -343,20 +315,10 @@ const RecipePage: FC<RecipePageProps> = ({
               </p>
             </div>
 
-            {/* Search Component - Only show when not in favorites view */}
             {!isShowingOnlyFavorites && (
               <div className="mb-10">
                 <SearchComponent
-                  onSearch={
-                    layoutStyle === "tabs"
-                      ? (_searchTerm: string) => {
-                          const event = {
-                            preventDefault: () => {},
-                          } as FormEvent;
-                          handleSearchSubmit(event);
-                        }
-                      : handleSearch
-                  }
+                  onSearch={performSearch}
                   onApplyFilters={handleAdvancedSearch}
                   initialFilters={selectedFilters}
                   placeholder="Enter a search term ..."
@@ -364,9 +326,7 @@ const RecipePage: FC<RecipePageProps> = ({
               </div>
             )}
 
-            {/* Recipe Sections */}
             {isShowingOnlyFavorites ? (
-              // Show only favorite recipes when in favorites view
               favoriteRecipes.length > 0 ? (
                 <RecipeSection
                   title="My Favorite Recipes"
@@ -395,7 +355,6 @@ const RecipePage: FC<RecipePageProps> = ({
                 </div>
               )
             ) : (
-              // Show recommended and explore recipes in normal view
               <>
                 {recommendedRecipes.length > 0 && (
                   <RecipeSection

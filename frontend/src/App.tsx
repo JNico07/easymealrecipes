@@ -22,10 +22,18 @@ const App = () => {
   useEffect(() => {
     const fetchUser = async () => {
       try {
-        const data = await getCurrentUser();
-        setUserId(data.user.id);
-        setUserName(data.user.username);
-        navigate("/");
+        // Only attempt to get current user if we're not on the login or signup page
+        // This prevents auto-login after logout
+        if (location.pathname !== '/login' && location.pathname !== '/signup') {
+          const data = await getCurrentUser();
+          setUserId(data.user.id);
+          setUserName(data.user.username);
+          navigate("/");
+        } else {
+          // If we're on login/signup page, don't try to auto-login
+          setUserId(null);
+          setUserName(null);
+        }
       } catch (error) {
         console.error(error);
         setUserId(null);
@@ -35,7 +43,7 @@ const App = () => {
       }
     };
     fetchUser();
-  }, []);
+  }, [location.pathname, navigate]); // Re-run when the path changes or navigate function changes
 
   const handleLoginSuccess = (newUserId: number, newUserName: string) => {
     setUserId(newUserId);

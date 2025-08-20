@@ -20,7 +20,7 @@ app.use(
     origin: [
       "http://localhost:5173",
       "https://easymealrecipes.vercel.app",
-      "https://recipe-app-production-39fc.up.railway.app",
+      "https://easymealrecipes-api.up.railway.app",
     ],
     credentials: true, // allow cookies
   })
