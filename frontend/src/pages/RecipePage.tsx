@@ -1,4 +1,5 @@
-import { FC, useState, useEffect, useRef, FormEvent } from "react";
+import { useState, useEffect, useRef } from "react";
+import type { FC, FormEvent } from "react";
 import { useNavigate } from "react-router-dom";
 import Sidebar from "../components/Sidebar";
 import SearchComponent from "../components/SearchComponent";
@@ -119,9 +120,9 @@ const RecipePage: FC<RecipePageProps> = ({ userId, username, layoutStyle = "side
 
   // Handle advanced search
   const handleAdvancedSearch = async (filters: {
-    category: string;
-    area: string;
-    ingredient: string;
+    category?: string;
+    area?: string;
+    ingredient?: string;
   }) => {
     try {
       const response = await searchRecipesWithFilters({
@@ -343,7 +344,12 @@ const RecipePage: FC<RecipePageProps> = ({ userId, username, layoutStyle = "side
               <div className="mb-10">
                 <SearchComponent
                   onSearch={
-                    layoutStyle === "tabs" ? handleSearchSubmit : handleSearch
+                    layoutStyle === "tabs" 
+                      ? (searchTerm: string) => {
+                          const event = { preventDefault: () => {} } as FormEvent;
+                          handleSearchSubmit(event);
+                        }
+                      : handleSearch
                   }
                   onApplyFilters={handleAdvancedSearch}
                   initialFilters={selectedFilters}

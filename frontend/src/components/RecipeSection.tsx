@@ -1,4 +1,5 @@
-import { FC, useState, useEffect } from "react";
+import { useState, useEffect } from "react";
+import type { FC } from "react";
 import RecipeCard from "./RecipeCard";
 import type { Recipe, RecipeInformation } from "../types";
 import * as api from "../api";

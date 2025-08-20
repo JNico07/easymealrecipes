@@ -1,5 +1,5 @@
 import type { FC } from 'react';
-import { Home, Search, Users, Heart, HelpCircle, Settings } from 'lucide-react';
+import { Home, Search, Heart, Settings } from 'lucide-react';
 
 interface SidebarProps {
   activeItem: string;

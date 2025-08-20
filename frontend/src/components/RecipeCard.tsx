@@ -1,4 +1,4 @@
-import { FC } from "react";
+import type { FC } from "react";
 import { Heart } from "lucide-react";
 import { AiFillHeart, AiOutlineHeart } from "react-icons/ai";
 import type { Recipe } from "../types";
@@ -13,11 +13,7 @@ interface RecipeCardProps {
   variant?: "modern" | "classic";
 }
 
-const colorClasses = {
-  green: "bg-green-100 text-green-600",
-  pink: "bg-pink-100 text-pink-600",
-  orange: "bg-orange-100 text-orange-600",
-};
+
 
 const RecipeCard: FC<RecipeCardProps> = ({
   recipe,

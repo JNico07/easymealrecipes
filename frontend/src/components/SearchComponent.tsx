@@ -1,4 +1,5 @@
-import { FC, FormEvent, useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
+import type { FC, FormEvent } from 'react';
 import { Search } from 'lucide-react';
 import * as api from "../api";
 import type { RecipeArea, RecipeCategory, RecipeIngredient } from "../types";
