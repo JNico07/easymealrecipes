@@ -123,7 +123,7 @@ const RecipeSection: FC<RecipeSectionProps> = ({
                       className="w-full rounded-xl shadow-md object-cover"
                     />
                     <div className="mt-4 flex flex-wrap gap-2">
-                      {selectedRecipe.strTags && selectedRecipe.strTags.trim() !== "" &&
+                      {selectedRecipe.strTags && typeof selectedRecipe.strTags === 'string' && selectedRecipe.strTags.trim() !== "" &&
                         selectedRecipe.strTags.split(",").map((tag, index) => {
                           const colors = [
                             "bg-blue-100 text-blue-800",
