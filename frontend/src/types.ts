@@ -24,6 +24,7 @@ export interface RecipeInformation {
     ingredient: string;
     measure: string;
   }[];
+  strTags: string;
 }
 
 export interface RecipeCategory {
@@ -41,4 +42,3 @@ export interface RecipeIngredient {
   description: string;
   type: string;
 }
-

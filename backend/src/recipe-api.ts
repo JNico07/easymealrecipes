@@ -1,5 +1,3 @@
-import { title } from "process";
-
 const apiKey = process.env.API_KEY;
 
 // search by name
@@ -14,7 +12,7 @@ export const searchRecipes = async (searchTerm: string) => {
 
     // Map the results to match the Recipe interface
     const results = meals.map((meals: any) => ({
-      id: meals.idMeal,
+      id: parseInt(meals.idMeal),
       title: meals.strMeal,
       image: meals.strMealThumb,
       imageType: "jpg",
@@ -64,7 +62,7 @@ export const getRecipeInformation = async (recipeId: string) => {
       youtubeTutorial: meal.strYoutube || "",
       sourceUrl:
         meal.strSource || "https://www.themealdb.com/meal/" + meal.idMeal,
-      ingredients,
+      ingredients: ingredients || [],
       strTags: meal.strTags || "",
     };
   } catch (err) {
@@ -215,13 +213,14 @@ export const getRandomRecipes = async (count = 10) => {
 
     const results = await Promise.all(promises);
     const recipes = results
-      .map((r) => r.meals[0])
+      .map((r) => r.meals?.[0])
+      .filter(Boolean)
       .map((meal) => ({
         id: parseInt(meal.idMeal),
         title: meal.strMeal,
         image: meal.strMealThumb,
         imageType: "jpg",
-        strTags: meal.strTags,
+        strTags: meal.strTags || "",
       }));
 
     return { results: recipes };
