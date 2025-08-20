@@ -47,9 +47,10 @@ const RecipeSection: FC<RecipeSectionProps> = ({
       setIsLoading(true);
 
       api
-        .getRecipeInformation(String(selectedRecipe.id)) // 🔹 use provided API
+        .getRecipeInformation(String(selectedRecipe.id))
         .then((data: RecipeInformation) => {
           setRecipeDetails(data);
+          console.log("recipe info: ", data);
           setIsLoading(false);
         })
         .catch((error) => {
@@ -123,47 +124,54 @@ const RecipeSection: FC<RecipeSectionProps> = ({
                       className="w-full rounded-xl shadow-md object-cover"
                     />
                     <div className="mt-4 flex flex-wrap gap-2">
-                      {selectedRecipe.strTags && typeof selectedRecipe.strTags === 'string' && selectedRecipe.strTags.trim() !== "" ? (
-                        selectedRecipe.strTags.split(",").map((tag, index) => {
-                          const colors = [
-                            "bg-blue-100 text-blue-800",
-                            "bg-green-100 text-green-700",
-                            "bg-pink-100 text-pink-700",
-                            "bg-orange-100 text-orange-700",
-                            "bg-purple-100 text-purple-700",
-                          ];
-                          const colorClass = colors[index % colors.length];
-                          return (
-                            <span
-                              key={index}
-                              className={`px-3 py-1 rounded-full text-sm font-medium ${colorClass}`}
-                            >
-                              {tag.trim()}
-                            </span>
-                          );
-                        })
-                      ) : null}
+                      {selectedRecipe.strTags &&
+                      typeof selectedRecipe.strTags === "string" &&
+                      selectedRecipe.strTags.trim() !== ""
+                        ? selectedRecipe.strTags
+                            .split(",")
+                            .map((tag, index) => {
+                              const colors = [
+                                "bg-blue-100 text-blue-800",
+                                "bg-green-100 text-green-700",
+                                "bg-pink-100 text-pink-700",
+                                "bg-orange-100 text-orange-700",
+                                "bg-purple-100 text-purple-700",
+                              ];
+                              const colorClass = colors[index % colors.length];
+                              return (
+                                <span
+                                  key={index}
+                                  className={`px-3 py-1 rounded-full text-sm font-medium ${colorClass}`}
+                                >
+                                  {tag.trim()}
+                                </span>
+                              );
+                            })
+                        : null}
                     </div>
                   </div>
 
                   {/* Right: Ingredients */}
-                    <div>
-                      <h3 className="text-xl font-semibold mb-3 border-b pb-2">
-                        Ingredients
-                      </h3>
-                      {recipeDetails.ingredients && recipeDetails.ingredients.length > 0 ? (
-                        <ul className="list-disc pl-5 mb-6 space-y-1 text-gray-700">
-                          {recipeDetails.ingredients.map((item, index) => (
-                            <li key={index} className="leading-relaxed">
-                              <span className="font-medium">{item.measure}</span>{" "}
-                              {item.ingredient}
-                            </li>
-                          ))}
-                        </ul>
-                      ) : (
-                        <p className="text-gray-600 mb-6">No ingredients information available</p>
-                      )}
-                    </div>
+                  <div>
+                    <h3 className="text-xl font-semibold mb-3 border-b pb-2">
+                      Ingredients
+                    </h3>
+                    {recipeDetails.ingredients &&
+                    recipeDetails.ingredients.length > 0 ? (
+                      <ul className="list-disc pl-5 mb-6 space-y-1 text-gray-700">
+                        {recipeDetails.ingredients.map((item, index) => (
+                          <li key={index} className="leading-relaxed">
+                            <span className="font-medium">{item.measure}</span>{" "}
+                            {item.ingredient}
+                          </li>
+                        ))}
+                      </ul>
+                    ) : (
+                      <p className="text-gray-600 mb-6">
+                        No ingredients information available
+                      </p>
+                    )}
+                  </div>
 
                   {/* Full-width Instructions */}
                   <div className="md:col-span-2">

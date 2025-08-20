@@ -34,36 +34,32 @@ export const getRecipeInformation = async (recipeId: string) => {
   try {
     const response = await fetch(url.toString());
     const data = await response.json();
-    const meal = data.meals ? data.meals[0] : null;
+    const meals = data.meals || [];
 
-    if (!meal) return null;
+    if (meals.length === 0) return null;
 
-    // Extract ingredients + measures
-    const ingredients = [];
+    const meal = meals[0]; // take the first one
+    const ingredients: { ingredient: string; measure: string }[] = [];
+
     for (let i = 1; i <= 20; i++) {
       const ingredient = meal[`strIngredient${i}`];
       const measure = meal[`strMeasure${i}`];
       if (ingredient && ingredient.trim() !== "") {
-        ingredients.push({
-          ingredient,
-          measure: measure || "",
-        });
+        ingredients.push({ ingredient, measure: measure || "" });
       }
     }
 
-    // Transform to match frontend's RecipeInformation
     return {
       id: parseInt(meal.idMeal),
       title: meal.strMeal,
       instruction: meal.strInstructions,
-      sourceName: meal.strSource || "TheMealDB",
+      sourceName: meal.strSource || "",
+      youtubeTutorial: meal.strYoutube || "",
+      sourceUrl: meal.strSource || "",
       image: meal.strMealThumb,
       imageType: "jpg",
-      youtubeTutorial: meal.strYoutube || "",
-      sourceUrl:
-        meal.strSource || "https://www.themealdb.com/meal/" + meal.idMeal,
-      ingredients: ingredients || [],
-      strTags: meal.strTags || "",
+      ingredients,
+      strTags: meal.strTags,
     };
   } catch (err) {
     console.error(err);
