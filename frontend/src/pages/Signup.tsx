@@ -6,9 +6,15 @@ interface Props {
   onCancel: () => void;
 }
 
+function getErrorMessage(error: unknown) {
+  if (error instanceof Error) return error.message;
+  return String(error);
+}
+
 const Signup = ({ onSignupSuccess, onCancel }: Props) => {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
+  const [errorMsg, setErrorMsg] = useState("");
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -19,8 +25,9 @@ const Signup = ({ onSignupSuccess, onCancel }: Props) => {
       );
       await login(username, password);
       onSignupSuccess(userId, returnUsername); // Notify parent component of successful login
-    } catch (err) {
-      console.error("Signup failed", err);
+    } catch (error) {
+      console.error("Signup failed", error);
+      setErrorMsg(getErrorMessage(error));
     }
   };
 
@@ -63,6 +70,15 @@ const Signup = ({ onSignupSuccess, onCancel }: Props) => {
             required
           />
         </div>
+
+        {errorMsg && (
+          <div
+            role="alert"
+            className="mb-4 text-sm text-red-600 bg-red-100 border border-red-300 rounded px-2 py-1 text-center"
+          >
+            {errorMsg}
+          </div>
+        )}
 
         <button
           type="submit"
