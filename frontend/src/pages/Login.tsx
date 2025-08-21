@@ -95,7 +95,7 @@ const Login = ({ onLoginSuccess, onCreateAccountClick }: Props) => {
         className="absolute bottom-8 text-[#FF8C42] text-lg text-center font-bold"
         style={{ textShadow: "0 1px 2px rgba(0, 0, 0, 0.6)" }}
       >
-        <p>
+        <p className="text-3xl">
           Don’t have an account?{" "}
           <button
             onClick={onCreateAccountClick}

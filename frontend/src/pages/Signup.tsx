@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { signup } from "../api";
+import { login, signup } from "../api";
 
 interface Props {
   onSignupSuccess: (userId: number, username: string) => void;
@@ -17,6 +17,7 @@ const Signup = ({ onSignupSuccess, onCancel }: Props) => {
         username,
         password
       );
+      await login(username, password);
       onSignupSuccess(userId, returnUsername); // Notify parent component of successful login
     } catch (err) {
       console.error("Signup failed", err);
@@ -71,11 +72,11 @@ const Signup = ({ onSignupSuccess, onCancel }: Props) => {
         </button>
       </form>
 
-      <div className="absolute bottom-8 text-black text-lg font-bold">
+      <div className="absolute bottom-8 text-black text-3xl font-bold">
         <button
           type="button"
           onClick={onCancel}
-          className="underline text-yellow-300 hover:text-white font-bold"
+          className="underline text-yellow-400 hover:text-white font-bold"
           style={{ textShadow: "0 1px 2px rgba(0, 0, 0, 0.6)" }}
         >
           Back to Login
