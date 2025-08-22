@@ -21,7 +21,7 @@ Powered by:
 - 🖼️ **Modern UI**: Fully responsive interface built with Tailwind and React components  
 
 ---
-![GazeGuard Demo](https://github.com/JNico07/nico-portfolio/blob/main/public/easymealrecipes.gif)
+
 ---
 
 ## 🚀 Getting Started
