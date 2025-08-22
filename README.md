@@ -20,9 +20,9 @@ Powered by:
 - 🛡️ **Backend API**: RESTful APIs for recipe browsing, user management, and favourites  
 - 🖼️ **Modern UI**: Fully responsive interface built with Tailwind and React components  
 
----
-![GazeGuard Demo](https://github.com/JNico07/nico-portfolio/blob/main/public/easymealrecipes.gif)
----
+<p align="center">
+  <img src="https://github.com/jaynico-dev/nico-portfolio/raw/main/public/easymealrecipes.gif" alt="EasyMealRecipes Demo" width="80%"/>
+</p>
 
 ## 🚀 Getting Started
 
