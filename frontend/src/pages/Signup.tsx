@@ -33,14 +33,14 @@ const Signup = ({ onSignupSuccess, onCancel }: Props) => {
 
   return (
     <div
-      className="flex flex-col items-center justify-center min-h-screen bg-cover bg-center px-4"
+      className="flex flex-col items-center justify-start min-h-screen bg-cover bg-center px-4 pt-12"
       style={{ backgroundImage: 'url("/hero-image.jpg")' }}
     >
       <h1
         className="text-4xl md:text-5xl font-extrabold text-[#FF8C42] mb-8 text-center"
         style={{ textShadow: "0 2px 4px rgba(0,0,0,0.5)" }}
       >
-        🍽️ Welcome to <span className="text-yellow-300">EasyMealRecipes</span>
+        Welcome to <span className="text-yellow-300">EasyMealRecipes</span>
       </h1>
 
       <form

@@ -21,12 +21,15 @@ const Sidebar: FC<SidebarProps> = ({ activeItem, onNavigate, onLogout }) => {
     >
       {/* Logo */}
       <div>
-        <div className="p-6 flex items-center justify-center">
+        <div className="p-6 flex flex-col items-center justify-center space-y-4">
           <img
             src="/logo.png"
             alt="Recipe App Logo"
-            className="h-25 w-auto rounded-full object-cover"
+            className="h-24 w-24 rounded-full object-cover"
           />
+          <h1 className="text-2xl font-bold text-orange-600 ml-4">
+            EasyMealRecipes
+          </h1>
         </div>
 
         {/* Main menu */}
