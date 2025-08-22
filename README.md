@@ -30,8 +30,8 @@ Powered by:
 
 - [Node.js](https://nodejs.org/) (v18+ recommended)  
 - npm (v9+ recommended)  
-- PostgreSQL (or use the included **NeonDB** connection string)  
-- TheMealDB API Key (already configured in `.env`)  
+- PostgreSQL
+- TheMealDB API Key
 
 ---
 
