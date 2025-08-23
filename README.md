@@ -7,6 +7,10 @@ Powered by:
 - **Backend**: Node.js + Express + Prisma  
 - **Data Source**: [TheMealDB API](https://www.themealdb.com/)
 
+**Live Links:**  
+- Frontend: <a href="https://easymealrecipes.vercel.app" target="_blank">https://easymealrecipes.vercel.app</a>  
+- Backend: <a href="https://easymealrecipes-api.up.railway.app" target="_blank">https://easymealrecipes-api.up.railway.app</a>
+
 ---
 
 ## ✨ Features
