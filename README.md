@@ -30,8 +30,8 @@ Powered by:
 
 - [Node.js](https://nodejs.org/) (v18+ recommended)  
 - npm (v9+ recommended)  
-- PostgreSQL (or use the included **NeonDB** connection string)  
-- TheMealDB API Key (already configured in `.env`)  
+- PostgreSQL
+- TheMealDB API Key
 
 ---
 
@@ -68,9 +68,6 @@ npm run dev
 - 🌐 **Frontend**: [http://localhost:5173](http://localhost:5173)  
 - 🔌 **Backend API**: [http://localhost:5000](http://localhost:5000)
 
----
-
-## 📁 Project Structure
 ---
 
 ## 📁 Project Structure
