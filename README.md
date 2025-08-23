@@ -8,8 +8,9 @@ Powered by:
 - **Data Source**: [TheMealDB API](https://www.themealdb.com/)
 
 **Live Links:**  
-- Frontend: [https://easymealrecipes.vercel.app](https://easymealrecipes.vercel.app)  
-- Backend: [https://easymealrecipes-api.up.railway.app](https://easymealrecipes-api.up.railway.app)
+- Frontend: <a href="https://easymealrecipes.vercel.app" target="_blank">https://easymealrecipes.vercel.app</a>  
+- Backend: <a href="https://easymealrecipes-api.up.railway.app" target="_blank">https://easymealrecipes-api.up.railway.app</a>
+
 ---
 
 ## ✨ Features
