@@ -27,6 +27,9 @@ app.use(
 );
 
 // GET - START
+app.get("/", (req, res) => {
+  res.send("Hello, EasyMealRecipes API is running!");
+});
 // search endpoint
 app.get("/api/recipes/search", async (req, res) => {
   // GET http://localhost/api/recipes/search?searchTerm=burger&page=1
