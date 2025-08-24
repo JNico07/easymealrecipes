@@ -15,22 +15,24 @@ import Footer from "./components/Footer";
 const App = () => {
   const [userId, setUserId] = useState<number | null>(null);
   const [username, setUserName] = useState<string | null>(null);
+  const [isGuest, setIsGuest] = useState(false);
   const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
-  const location = useLocation(); // ✅ Get current route
+  const location = useLocation(); // Get current route
 
   useEffect(() => {
     const fetchUser = async () => {
       try {
-        // Only attempt to get current user if we're not on the login or signup page
-        // This prevents auto-login after logout
-        if (location.pathname !== '/login' && location.pathname !== '/signup') {
+        if (
+          !isGuest &&
+          location.pathname !== "/login" &&
+          location.pathname !== "/signup"
+        ) {
           const data = await getCurrentUser();
           setUserId(data.user.id);
           setUserName(data.user.username);
           navigate("/");
-        } else {
-          // If we're on login/signup page, don't try to auto-login
+        } else if(!isGuest) {
           setUserId(null);
           setUserName(null);
         }
@@ -43,17 +45,27 @@ const App = () => {
       }
     };
     fetchUser();
-  }, [location.pathname, navigate]); // Re-run when the path changes or navigate function changes
+  }, [location.pathname, navigate, isGuest]);
 
+  // LOGIN
   const handleLoginSuccess = (newUserId: number, newUserName: string) => {
     setUserId(newUserId);
     setUserName(newUserName);
+    setIsGuest(false);
     navigate("/");
   };
-
+  // SIGNUP
   const handleSignupSuccess = (newUserId: number, newUserName: string) => {
     setUserId(newUserId);
     setUserName(newUserName);
+    setIsGuest(false);
+    navigate("/");
+  };
+  // GUEST
+  const handleGuestAccess = () => {
+    setUserId(0);
+    setUserName("Guest");
+    setIsGuest(true);
     navigate("/");
   };
 
@@ -71,8 +83,13 @@ const App = () => {
           <Route
             path="/"
             element={
-              userId ? (
-                <RecipePage userId={userId} username={username} layoutStyle="sidebar" />
+              userId !== null ? (
+                <RecipePage
+                  userId={userId}
+                  username={username}
+                  layoutStyle="sidebar"
+                  isGuest={isGuest}
+                />
               ) : (
                 <Navigate to="/login" />
               )
@@ -81,8 +98,13 @@ const App = () => {
           <Route
             path="/home"
             element={
-              userId ? (
-                <RecipePage userId={userId} username={username} layoutStyle="tabs" />
+              userId !== null ? (
+                <RecipePage
+                  userId={userId}
+                  username={username}
+                  layoutStyle="tabs"
+                  isGuest={isGuest}
+                />
               ) : (
                 <Navigate to="/login" />
               )
@@ -94,6 +116,7 @@ const App = () => {
               <LoginPage
                 onLoginSuccess={handleLoginSuccess}
                 onCreateAccountClick={() => navigate("/signup")}
+                onGuestAccess={handleGuestAccess}
               />
             }
           />

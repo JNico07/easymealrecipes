@@ -20,6 +20,7 @@ interface RecipePageProps {
   userId: number;
   username: string | null;
   layoutStyle?: "sidebar" | "tabs";
+  isGuest?: boolean;
 }
 
 type Tab = "home" | "explore" | "favorites";
@@ -28,6 +29,7 @@ const RecipePage: FC<RecipePageProps> = ({
   userId,
   username,
   layoutStyle = "sidebar",
+  isGuest = false,
 }) => {
   const navigate = useNavigate();
   const [activeTab, setActiveTab] = useState<Tab>("home");
@@ -134,6 +136,11 @@ const RecipePage: FC<RecipePageProps> = ({
 
   // Favorite toggle
   const handleFavoriteToggle = async (recipe: Recipe) => {
+    if (isGuest) {
+      alert("Login or Signup to save Favorites");
+      return;
+    }
+
     try {
       if (favoriteRecipeIds.includes(recipe.id)) {
         await removeFavouriteRecipe(recipe, userId);
@@ -178,6 +185,18 @@ const RecipePage: FC<RecipePageProps> = ({
 
   return (
     <>
+      {isGuest && (
+        <div className="bg-yellow-100 text-yellow-800 px-4 py-2 text-center text-sm">
+          You are in <b>Guest Mode</b>. Some features are disabled.{" "}
+          <button
+            className="underline font-medium"
+            onClick={() => navigate("/login")}
+          >
+            Sign in for full access
+          </button>
+        </div>
+      )}
+
       {/* Top Nav (Mobile + Tabs) */}
       <div className="fixed top-0 left-0 right-0 bg-white shadow-md z-50 flex items-center justify-between p-4 md:hidden">
         <div className="text-lg font-bold text-orange-600">EasyMealRecipes</div>

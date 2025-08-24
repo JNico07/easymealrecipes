@@ -21,7 +21,10 @@ const Sidebar: FC<SidebarProps> = ({ activeItem, onNavigate, onLogout }) => {
     >
       {/* Logo */}
       <div>
-        <div className="p-6 flex flex-col items-center justify-center space-y-4">
+        <div
+          className="p-6 flex flex-col items-center justify-center space-y-4 cursor-pointer"
+          onClick={() => window.location.reload()}
+        >
           <img
             src="/logo.png"
             alt="Recipe App Logo"

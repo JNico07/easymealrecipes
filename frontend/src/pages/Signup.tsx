@@ -47,7 +47,9 @@ const Signup = ({ onSignupSuccess, onCancel }: Props) => {
         onSubmit={handleSubmit}
         className="bg-white bg-opacity-90 p-8 rounded-lg shadow-md w-full max-w-sm"
       >
-        <h2 className="text-2xl font-bold mb-6 text-center">Signup</h2>
+        <h2 className="text-lg/md:text-2xl font-bold mb-6 text-center">
+          Create account
+        </h2>
 
         <div className="mb-4">
           <label className="block text-sm font-medium mb-1">Username</label>
